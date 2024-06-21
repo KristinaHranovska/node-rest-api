@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import "dotenv/config";
+import path from 'path';
 import mongoose from "mongoose";
 import swaggerDocument from './swagger.js';
 import swaggerUi from 'swagger-ui-express';

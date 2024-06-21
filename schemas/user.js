@@ -39,6 +39,7 @@ const userSchema = new Schema({
     },
     avatarURL: {
         type: String,
+        default: "https://res.cloudinary.com/dntbkzhtq/image/upload/v1718990428/11zon_cropped_yhd2pt.png"
     },
     token: {
         type: String,
@@ -47,6 +48,14 @@ const userSchema = new Schema({
     refreshToken: {
         type: String,
         default: null,
+    },
+    verificationToken: {
+        type: String,
+        default: null,
+    },
+    isVerified: {
+        type: Boolean,
+        default: false,
     },
 }, { versionKey: false, timestamps: true });
 
@@ -62,8 +71,14 @@ const loginSchema = Joi.object({
     password: Joi.string().min(6).max(22).required(),
 });
 
+const emailSchema = Joi.object({
+    email: Joi.string().pattern(validationEmail).required(),
+})
+
 export const Schemas = {
     registerSchema,
     loginSchema,
+    emailSchema
 };
+
 export const User = model("user", userSchema);

@@ -29,11 +29,11 @@ export const authorization = async (req, res, next) => {
         }
 
         const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "24h" });
+
         await User.findByIdAndUpdate(user._id, { token })
 
         res.json({
             email: user.email,
-            subscription: user.subscription,
             token
         })
 

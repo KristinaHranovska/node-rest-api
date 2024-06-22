@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import swaggerDocument from './swagger.js';
 import swaggerUi from 'swagger-ui-express';
 import userRouter from "./routes/userRouter.js";
+import waterRouter from "./routes/water.js";
 
 const app = express();
 const { DB_HOST, PORT } = process.env;
@@ -16,6 +17,8 @@ app.use(express.json());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/users', userRouter);
+
+app.use('/api', waterRouter);
 
 app.use((_, res) => {
     res.status(404).json({ message: "Route not found" });

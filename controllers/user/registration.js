@@ -36,8 +36,8 @@ export const registration = async (req, res, next) => {
 
         res.status(201).json({
             email: newUser.email,
-            token: newUser.token,
-        })
+            message: "User registered successfully. Please check your email to verify your account."
+        });
     }
     catch (error) {
         next(error)

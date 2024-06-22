@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { HttpError } from "../helpers/HttpError.js";
+import HttpError from "../helpers/HttpError.js";
 import { User } from "../schemas/user.js"
 
 const { SECRET_KEY } = process.env;
@@ -7,6 +7,7 @@ const { SECRET_KEY } = process.env;
 export const authenticate = async (req, res, next) => {
     const { authorization = "" } = req.headers;
     const [bearer, token] = authorization.split(" ");
+
     if (bearer !== "Bearer") {
         next(HttpError(401, "Not authorized"));
     }

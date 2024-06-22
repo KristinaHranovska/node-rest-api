@@ -1,9 +1,9 @@
 import { Schema, model } from 'mongoose';
 import Joi from 'joi';
 import mongooseError from '../helpers/mongooseError.js';
+import { genderEnum, validationEmail } from '../helpers/constants.js';
 
-const validationEmail = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-const genderEnum = ["woman", "man"];
+
 
 const userSchema = new Schema({
     password: {

@@ -1,5 +1,6 @@
 import { User } from "../../schemas/user.js";
 import HttpError from "../../helpers/HttpError.js";
+import { TRACKER_URL } from "../../helpers/constants.js";
 
 export const verifyEmail = async (req, res, next) => {
     try {
@@ -11,13 +12,13 @@ export const verifyEmail = async (req, res, next) => {
         }
 
         if (user.isVerified) {
-            return res.status(200).json({ message: "Email is already verified" });
+            return res.redirect(TRACKER_URL);
         }
 
         user.isVerified = true;
         await user.save();
 
-        res.status(200).json({ message: "Email verified successfully" });
+        res.redirect(TRACKER_URL);
     } catch (error) {
         next(error);
     }

@@ -3,7 +3,7 @@ import { Schemas } from "../schemas/usersSchemas.js";
 import { validateBody } from "../helpers/validateBody.js";
 import { registration } from "../controllers/user/registration.js";
 import { verifyEmail } from "../controllers/user/verifyEmail.js";
-import { getUsersCount } from "../controllers/user/getUsersCount.js";
+import { getUsersCountAndAvatar } from "../controllers/user/getUsersCountAndAvatar.js";
 import { authorization } from "../controllers/user/authorization.js";
 import { authenticate } from "../middleware/authenticate.js";
 import { getCurrentUser } from "../controllers/user/getCurrentUser.js";
@@ -14,7 +14,7 @@ userRouter.post("/signup", validateBody(Schemas.registerSchema), registration)
 
 userRouter.get('/verify/:verificationToken', verifyEmail);
 
-userRouter.get('/count', getUsersCount);
+userRouter.get('/happy', getUsersCountAndAvatar);
 
 userRouter.post("/signin", validateBody(Schemas.loginSchema), authorization)
 

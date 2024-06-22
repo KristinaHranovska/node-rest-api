@@ -4,6 +4,7 @@ import { validateBody } from "../helpers/validateBody.js";
 import { registration } from "../controllers/user/registration.js";
 import { verifyEmail } from "../controllers/user/verifyEmail.js";
 import { getUsersCount } from "../controllers/user/getUsersCount.js";
+import { authorization } from "../controllers/user/authorization.js";
 // import { authenticate } from "../middleware/authenticate.js";
 
 const userRouter = express.Router();
@@ -14,7 +15,7 @@ userRouter.get('/verify/:verificationToken', verifyEmail);
 
 userRouter.get('/count', getUsersCount);
 
-// userRouter.post("/signin", validateBody(Schemas.loginSchema), authorization)
+userRouter.post("/signin", validateBody(Schemas.loginSchema), authorization)
 
 // userRouter.get("/logout", authenticate, logout);
 

@@ -1,6 +1,6 @@
-import { User } from "../../schemas/user.js";
 import HttpError from "../../helpers/HttpError.js";
 import { TRACKER_URL } from "../../helpers/constants.js";
+import { User } from "../../models/user.js";
 
 export const verifyEmail = async (req, res, next) => {
     try {

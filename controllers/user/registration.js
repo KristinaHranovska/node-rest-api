@@ -2,10 +2,10 @@ import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from 'uuid';
 import "dotenv/config";
 
-import { User } from "../../schemas/user.js"
 import HttpError from "../../helpers/HttpError.js";
 import renderTemplate from "../../helpers/renderTemplate.js";
 import sendEmail from "../../helpers/sendEmail.js";
+import { User } from "../../models/user.js";
 
 const { BASE_URL } = process.env;
 

@@ -1,4 +1,5 @@
-import { User } from "../../schemas/user.js"
+import { User } from "../../models/user.js";
+
 
 export const getUsersCount = async (req, res, next) => {
     try {

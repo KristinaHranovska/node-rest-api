@@ -7,6 +7,7 @@ import { getUsersCountAndAvatar } from "../controllers/user/getUsersCountAndAvat
 import { authorization } from "../controllers/user/authorization.js";
 import { authenticate } from "../middleware/authenticate.js";
 import { getCurrentUser } from "../controllers/user/getCurrentUser.js";
+import { logout } from "../controllers/user/logout.js";
 
 const userRouter = express.Router();
 
@@ -20,7 +21,6 @@ userRouter.post("/signin", validateBody(Schemas.loginSchema), authorization)
 
 userRouter.get('/current', authenticate, getCurrentUser);
 
-// userRouter.get("/logout", authenticate, logout);
-
+userRouter.post("/logout", authenticate, logout);
 
 export default userRouter;

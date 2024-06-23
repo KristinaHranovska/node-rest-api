@@ -55,6 +55,14 @@ const userSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    resetToken: {
+        type: String,
+        default: null,
+    },
+    resetTokenExpiry: {
+        type: Date,
+        default: null,
+    },
 }, { versionKey: false, timestamps: true });
 
 userSchema.post('save', mongooseError);

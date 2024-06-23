@@ -11,7 +11,7 @@ const { BASE_URL } = process.env;
 
 export const registration = async (req, res, next) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, name } = req.body;
         const user = await User.findOne({ email });
         const verificationToken = uuidv4();
 
@@ -35,6 +35,7 @@ export const registration = async (req, res, next) => {
         await sendEmail(verifyEmail);
 
         res.status(201).json({
+            name,
             email: newUser.email,
             message: "User registered successfully. Please check your email to verify your account."
         });

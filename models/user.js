@@ -16,6 +16,7 @@ const userSchema = new Schema({
     name: {
         type: String,
         default: "User",
+        required: [true, 'Name is required'],
     },
     gender: {
         type: String,

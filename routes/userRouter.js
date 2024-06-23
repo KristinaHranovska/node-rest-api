@@ -11,6 +11,7 @@ import { logout } from "../controllers/user/logout.js";
 import { refreshTokens } from "../controllers/user/refreshTokens.js";
 import { updateUser } from "../controllers/user/updateUser.js";
 import upload from "../middleware/multerConfig.js";
+import { googleAuth, googleRedirect } from "../controllers/user/googleAuthController.js";
 
 const userRouter = express.Router();
 
@@ -29,5 +30,9 @@ userRouter.post("/logout", authenticate, logout);
 userRouter.post("/refresh-tokens", authenticate, refreshTokens);
 
 userRouter.patch("/update", authenticate, upload.single('avatar'), updateUser);
+
+userRouter.get("/google", googleAuth);
+
+userRouter.get("/google-redirect", googleRedirect);
 
 export default userRouter;

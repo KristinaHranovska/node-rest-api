@@ -1,6 +1,9 @@
+import jwt from 'jsonwebtoken';
 import HttpError from "../../helpers/HttpError.js";
-import { TRACKER_URL } from "../../helpers/constants.js";
 import { User } from "../../models/user.js";
+import "dotenv/config";
+
+const { SECRET_KEY, FRONTEND_URL } = process.env;
 
 export const verifyEmail = async (req, res, next) => {
     try {
@@ -12,13 +15,19 @@ export const verifyEmail = async (req, res, next) => {
         }
 
         if (user.isVerified) {
-            return res.redirect(TRACKER_URL);
+            jwt.sign({ id: user._id }, SECRET_KEY, { expiresIn: '1d' });
+            return res.redirect(`${FRONTEND_URL}`);
         }
 
         user.isVerified = true;
         await user.save();
 
-        res.redirect(TRACKER_URL);
+        const payload = { id: user._id };
+        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1d' });
+
+        await User.findByIdAndUpdate(user._id, { token });
+
+        return res.redirect(`${FRONTEND_URL}`);
     } catch (error) {
         next(error);
     }

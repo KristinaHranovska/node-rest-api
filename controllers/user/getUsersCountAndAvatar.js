@@ -11,7 +11,7 @@ export const getUsersCountAndAvatar = async (req, res, next) => {
 
         const userAvatars = await User.distinct("avatarURL", {
             avatarURL: {
-                $ne: "https://res.cloudinary.com/dntbkzhtq/image/upload/v1718990428/defaultAvatar.png"
+                $ne: "https://res.cloudinary.com/dntbkzhtq/image/upload/v1719141998/aqua_track/defaultAvatar.webp"
             }
         });
         res.status(200).json({ count: userCont, avatars: userAvatars })

@@ -1,6 +1,5 @@
 import Joi from 'joi';
 import { validationEmail } from '../helpers/constants.js';
-import { token } from 'morgan';
 
 const registerSchema = Joi.object({
     email: Joi.string().pattern(validationEmail).required().messages({

@@ -34,9 +34,9 @@ const userSchema = new Schema({
         type: Number,
         default: 1.5,
     },
-    avatarURL: {
+    avatar: {
         type: String,
-        default: "https://res.cloudinary.com/dntbkzhtq/image/upload/v1719141998/aqua_track/defaultAvatar.webp"
+        default: "https://res.cloudinary.com/dntbkzhtq/image/upload/v1719141998/AquaTrack/defaultAvatar.webp"
     },
     token: {
         type: String,

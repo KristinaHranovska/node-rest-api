@@ -1,17 +1,18 @@
 import queryString from 'query-string';
 import axios from 'axios';
+import jwt from 'jsonwebtoken'; // Не забудьте імпортувати jwt
 import "dotenv/config";
 import { User } from '../../models/user.js';
 
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIEN_SECRET, BASE_URL, FRONTEND_URL, SECRET_KEY, REFRESH_SECRET_KEY } = process.env;
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, BASE_URL, FRONTEND_URL, SECRET_KEY, REFRESH_SECRET_KEY } = process.env;
 
 export const googleAuth = async (req, res) => {
     const stringifiedParams = queryString.stringify({
         client_id: GOOGLE_CLIENT_ID,
         redirect_uri: `${BASE_URL}/users/google-redirect`,
         scope: [
-            "https://wwww.googleapis.com/auth/userinfo/email",
-            "https://wwww.googleapis.com/auth/userinfo/profile",
+            "https://www.googleapis.com/auth/userinfo.email",
+            "https://www.googleapis.com/auth/userinfo.profile",
         ].join(" "),
         response_type: "code",
         access_type: "offline",
@@ -33,7 +34,7 @@ export const googleRedirect = async (req, res) => {
         method: "post",
         data: {
             client_id: GOOGLE_CLIENT_ID,
-            client_secret: GOOGLE_CLIEN_SECRET,
+            client_secret: GOOGLE_CLIENT_SECRET,
             redirect_uri: `${BASE_URL}/users/google-redirect`,
             grant_type: "authorization_code",
             code,
@@ -50,7 +51,7 @@ export const googleRedirect = async (req, res) => {
 
     const { email, name } = userData.data;
 
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
 
     if (!user) {
         user = await User.create({

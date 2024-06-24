@@ -12,11 +12,10 @@ import {
 
 
 
-
 export const addWaterRecord = async (req, res, next) => {
 
-    const { amount, hours, minutes  } = req.body;
-
+    const { amount, hours, minutes, } = req.body;
+    const owner = req.user.id;
 
     let recordDate;
 
@@ -33,17 +32,17 @@ export const addWaterRecord = async (req, res, next) => {
         });
 
     } else {
-
-        recordDate = moment().tz(userTimezone); 
+        recordDate = moment().tz(userTimezone);  
     }
 
 
     const record = {
         amount: amount,
         date: recordDate.toDate(),
-        // owner: req.user.id//
+        owner: owner
     };
  
+
     const { error, value } = addWaterRecordSchema.validate(record);
 
     if (error) {
@@ -59,7 +58,6 @@ export const addWaterRecord = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-
 }
 
 
@@ -86,10 +84,9 @@ export const updateWaterRecord = async (req, res, next) => {
         }
 
 
-        // if (existingRecord.owner.toString() !== req.user.id) {
-        //     return next(HttpError(404));
-       
-        // }  
+        if (existingRecord.owner.toString() !== req.user.id) {
+            return next(HttpError(404));
+        }  
 
 
         const updatedWaterRecord = {
@@ -116,6 +113,7 @@ export const updateWaterRecord = async (req, res, next) => {
 
 
 export const deleteWaterRecord = async (req, res, next) => {
+
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -129,9 +127,9 @@ export const deleteWaterRecord = async (req, res, next) => {
             return next(HttpError(404));
         }
 
-        // if (record.owner.toString() !== req.user.id) {
-        //     return next(HttpError(403, "Access denied"));
-        // }
+        if (record.owner.toString() !== req.user.id) {
+            return next(HttpError(403, "Access denied"));
+        }
 
         const deletedRecord = await WaterRecord.findByIdAndDelete(id);
 
@@ -158,8 +156,10 @@ export const getDailyWaterRecord = async (req, res, next) => {
 
         const startOfDay = new Date(date);
         startOfDay.setHours(0, 0, 0, 0);
+
         const endOfDay = new Date(date);
         endOfDay.setHours(23, 59, 59, 999);
+
 
         const records = await WaterRecord.find({ 
             owner: req.user.id,
@@ -192,6 +192,7 @@ export const getMonthlyWaterRecord = async (req, res, next) => {
         const userTimezone = req.headers['timezone'] || 'UTC';
 
         const startOfMonth = new Date(year, month - 1, 1);
+
         const endOfMonth = new Date(year, month, 0);
         endOfMonth.setHours(23, 59, 59, 999);
 
@@ -217,35 +218,6 @@ export const getMonthlyWaterRecord = async (req, res, next) => {
 
 
 
-export const calculateWaterStats = async (req, res, next) => {
-
-    const id = req.params;
-
-    try {
-        const user = await User.findById(id);// поставити правильного user i owner
-
-        if (!user) {//
-            return next(HttpError(404));
-        }
-
-        // отримання щоденної суми води 
-        const dailyWaterSum = await getDailyWaterRecord(id); 
-
-        // різниця
-        const difference = user.dailyWaterNorm - dailyWaterSum;
-
-        // відсоткі
-        const percentComplete = (dailyWaterSum / user.dailyWaterNorm) * 100;
-
-        res.status(200).json({dailyWaterSum, difference, percentComplete});
-
-    } catch (error) {
-        next(error);
-    }
-};// перевірити
-
-
-
 function convertToUserTimezone(date, timezone) {
     return new Date(date.toLocaleString('en-US', { timeZone: timezone }));
 }
@@ -255,6 +227,7 @@ function convertToUserTimezone(date, timezone) {
 const updateAmount = async (id, body) => {
 
     const existingRecord = await WaterRecord.findById(id);
+
     if (!existingRecord) {
         return next(HttpError(404));
     }
@@ -266,5 +239,3 @@ const updateAmount = async (id, body) => {
     
     return existingRecord;
 };
-
-

@@ -12,12 +12,7 @@ const getCurrentDate = () => {
         now.getMinutes()
     );
 };
-//додати овнера
-// owner: {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: 'user',
-//     required: true,
-//   }
+
 
 const waterRecordSchema = new mongoose.Schema({
     amount: {
@@ -28,10 +23,17 @@ const waterRecordSchema = new mongoose.Schema({
         type: Date,
         required: true,
         default: getCurrentDate
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
+        required: true,
     }
 }, {
     versionKey: false,
     timestamps: true
 });
+
+
 
 export default mongoose.model('WaterRecord', waterRecordSchema);

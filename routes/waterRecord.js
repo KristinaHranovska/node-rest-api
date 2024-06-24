@@ -5,10 +5,9 @@ import {
     updateWaterRecord,
     deleteWaterRecord,
     getDailyWaterRecord,
-    getMonthlyWaterRecord,
-    calculateWaterStats
-}from "../controllers/water/waterRecordController.js";
-
+    getMonthlyWaterRecord
+} from "../controllers/water/waterRecordController.js";
+import { calculateWaterStats } from "../controllers/water/waterPercent.js"
 
 const waterRouter = express.Router();
 const jsonParser = express.json();
@@ -17,8 +16,8 @@ const jsonParser = express.json();
 waterRouter.post("/", jsonParser, addWaterRecord);
 waterRouter.patch("/:id/amount", jsonParser, updateWaterRecord);
 waterRouter.delete("/:id", deleteWaterRecord);
-waterRouter.get("/daily/:date", jsonParser, getDailyWaterRecord);
-waterRouter.get("/monthly/:year/:month", jsonParser, getMonthlyWaterRecord);
-waterRouter.get("/percentage", calculateWaterStats);//
+waterRouter.get("/daily/:date", getDailyWaterRecord);
+waterRouter.get("/monthly/:year/:month", getMonthlyWaterRecord);
+waterRouter.get("/stats/", calculateWaterStats);
 
 export default waterRouter;

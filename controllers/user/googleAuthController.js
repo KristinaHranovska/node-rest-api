@@ -1,6 +1,6 @@
 import queryString from 'query-string';
 import axios from 'axios';
-import jwt from 'jsonwebtoken'; // Не забудьте імпортувати jwt
+import jwt from 'jsonwebtoken';
 import "dotenv/config";
 import { User } from '../../models/user.js';
 
@@ -68,5 +68,5 @@ export const googleRedirect = async (req, res) => {
 
     await User.findByIdAndUpdate(user._id, { token, refreshToken });
 
-    return res.redirect(`${FRONTEND_URL}/tracker/google-redirect?token=${token}&refreshToken=${refreshToken}`);
+    return res.redirect(`${FRONTEND_URL}/tracker/google-redirect/?token=${token}&refreshToken=${refreshToken}`);
 }

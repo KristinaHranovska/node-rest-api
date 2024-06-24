@@ -6,6 +6,12 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: [true, 'Password is required'],
+        validate: {
+            validator: function (value) {
+                return this.isGoogleUser || value;
+            },
+            message: 'Password is required for non-Google users'
+        }
     },
     email: {
         type: String,
@@ -62,6 +68,10 @@ const userSchema = new Schema({
     resetTokenExpiry: {
         type: Date,
         default: null,
+    },
+    isGoogleUser: {
+        type: Boolean,
+        default: false,
     },
 }, { versionKey: false, timestamps: true });
 

@@ -59,6 +59,7 @@ export const googleRedirect = async (req, res) => {
             name,
             isVerified: true,
             password: '',
+            isGoogleUser: true,
         });
     }
 

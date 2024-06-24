@@ -68,5 +68,5 @@ export const googleRedirect = async (req, res) => {
 
     await User.findByIdAndUpdate(user._id, { token, refreshToken });
 
-    return res.redirect(`${FRONTEND_URL}/tracker`);
+    return res.redirect(`${FRONTEND_URL}/tracker?token=${token}&refreshToken=${refreshToken}`);
 }

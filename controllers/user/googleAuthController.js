@@ -8,7 +8,7 @@ const { GOOGLE_CLIENT_ID, GOOGLE_CLIEN_SECRET, BASE_URL, FRONTEND_URL, SECRET_KE
 export const googleAuth = async (req, res) => {
     const stringifiedParams = queryString.stringify({
         client_id: GOOGLE_CLIENT_ID,
-        redirect_uri: `${BASE_URL}/auth/google-redirect`,
+        redirect_uri: `${BASE_URL}/users/google-redirect`,
         scope: [
             "https://wwww.googleapis.com/auth/userinfo/email",
             "https://wwww.googleapis.com/auth/userinfo/profile",
@@ -34,7 +34,7 @@ export const googleRedirect = async (req, res) => {
         data: {
             client_id: GOOGLE_CLIENT_ID,
             client_secret: GOOGLE_CLIEN_SECRET,
-            redirect_uri: `${BASE_URL}/auth/google-redirect`,
+            redirect_uri: `${BASE_URL}/users/google-redirect`,
             grant_type: "authorization_code",
             code,
         },

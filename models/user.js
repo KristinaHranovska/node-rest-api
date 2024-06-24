@@ -5,13 +5,7 @@ import mongooseError from '../helpers/mongooseError.js';
 const userSchema = new Schema({
     password: {
         type: String,
-        required: [true, 'Password is required'],
-        validate: {
-            validator: function (value) {
-                return this.isGoogleUser || value;
-            },
-            message: 'Password is required for non-Google users'
-        }
+        required: function () { return !this.isGoogleUser; },
     },
     email: {
         type: String,

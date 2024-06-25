@@ -7,15 +7,19 @@ const { SECRET_KEY, FRONTEND_URL } = process.env;
 
 export const verifyEmail = async (req, res, next) => {
     try {
-        const { verificationToken } = req.params;
-        const user = await User.findOne({ verificationToken });
+        const { token } = req.params;
+
+        console.log('Verification Token:', token);
+
+        const user = await User.findOne({ verificationToken: token });
 
         if (!user) {
+            console.log('User not found with verification token:', token);
             throw HttpError(404, "User not found");
         }
 
         if (user.isVerified) {
-            jwt.sign({ id: user._id }, SECRET_KEY, { expiresIn: '1d' });
+            const token = jwt.sign({ id: user._id }, SECRET_KEY, { expiresIn: '1d' });
             return res.redirect(`${FRONTEND_URL}/verify-email?token=${token}`);
         }
 
@@ -23,9 +27,9 @@ export const verifyEmail = async (req, res, next) => {
         await user.save();
 
         const payload = { id: user._id };
-        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1d' });
+        const tokenJwt = jwt.sign(payload, SECRET_KEY, { expiresIn: '1d' });
 
-        await User.findByIdAndUpdate(user._id, { token });
+        await User.findByIdAndUpdate(user._id, { token: tokenJwt });
 
         return res.redirect(`${FRONTEND_URL}/verify-email?token=${token}`);
     } catch (error) {

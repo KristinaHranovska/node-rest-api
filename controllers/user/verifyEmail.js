@@ -30,7 +30,7 @@ export const verifyEmail = async (req, res, next) => {
             token
         });
 
-        return res.redirect(`${FRONTEND_URL}/verify-email?token=${tokenNew}`);
+        return res.redirect(`${FRONTEND_URL}/verify-email?token=${token}`);
 
     } catch (error) {
         next(error);

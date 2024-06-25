@@ -5,8 +5,6 @@
     "version": "1.0.0",
     "description": "The \"AquaTrack\" app helps users ensure their bodies receive an adequate amount of water each day."
   },
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
   "servers": [{ "url": "http://localhost:3000" }],
   "tags": [
     {
@@ -19,8 +17,6 @@
       "post": {
         "tags": ["Auth"],
         "summary": "User registration",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "Registration's object",
           "required": true,
@@ -34,7 +30,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "Successful operation",
             "content": {
               "application/json": {
                 "schema": {
@@ -53,13 +49,448 @@
           }
         }
       }
+    },
+    "/users/signin": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User login",
+        "requestBody": {
+          "description": "Login's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "401": {
+            "description": "Email or password invalid",
+            "content": {}
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/users/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User logout",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Sign out success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogoutResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/verify/{verificationToken}": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Verify email",
+        "parameters": [
+          {
+            "name": "verificationToken",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email verification successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/profile": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Get user profile",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {}
+          }
+        }
+      },
+      "put": {
+        "tags": ["Auth"],
+        "summary": "Update user profile",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Updated profile object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User profile updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/update": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Update user information",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Updated user information",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User information updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/reset": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Reset password",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Password reset request",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/happy": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Get user's happiness level",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HappinessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Happiness data not found",
+            "content": {}
+          }
+        }
+      },
+      "put": {
+        "tags": ["Auth"],
+        "summary": "Update user's happiness level",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Updated happiness level",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HappinessUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Happiness level updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/forgot": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Forgot password",
+        "requestBody": {
+          "description": "Forgot password request",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Recovery email sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForgotResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/google": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Authenticate with Google",
+        "requestBody": {
+          "description": "Google authentication request",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleAuthRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Google authentication successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleAuthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/google-redirect": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Google OAuth redirect",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirecting to application",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (missing or invalid token)",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {}
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
       "RegistrationRequest": {
         "type": "object",
-        "required": ["email", "password"],
         "properties": {
           "email": {
             "type": "string",
@@ -68,10 +499,10 @@
           },
           "password": {
             "type": "string",
-            "description": "User's password",
-            "example": "qwerty123"
+            "description": "User's password"
           }
-        }
+        },
+        "required": ["email", "password"]
       },
       "RegistrationResponse": {
         "type": "array",
@@ -80,20 +511,219 @@
           "properties": {
             "email": {
               "type": "string",
-              "description": "User's email",
-              "format": "email"
+              "format": "email",
+              "description": "User's email"
             },
             "userId": {
               "type": "number",
-              "description": "User's id",
-              "example": "32143232436545474"
+              "description": "User's id"
             }
           }
         },
         "example": [
-          { "email": "1@gmail.com", "userId": "1" },
-          { "email": "2@gmail.com", "userId": "2" }
+          {
+            "email": "1@gmail.com",
+            "userId": "1"
+          },
+          {
+            "email": "2@gmail.com",
+            "userId": "2"
+          }
         ]
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password"
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email"
+          },
+          "name": {
+            "type": "string",
+            "description": "User's name"
+          },
+          "token": {
+            "type": "string",
+            "description": "JWT token for the user"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Refresh token for the user"
+          }
+        },
+        "example": {
+          "email": "test@gmail.com",
+          "name": "TestName",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YjFlMjVmNmIwYTJjY2I5NTU5MWVjNyIsImlhdCI6MTY4OTM3OTQyMywiZXhwIjoxNjg5NDYyMjIzfQ.hT2Ta6pBhDR1vOF7LjcKxofyASDPjcTZtFi9CESKIuA",
+          "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YWQyZWRkMTEwYjBiOGRlZjQ4MTY1ZiIsImlhdCI6MTcwNTg0ODg3NSwiZXhwIjoxNzA2NDUzNjc1fQ.MONgGZKIUzqvq13OAlJvBctxJl1rt5OXMFQeIiZm2Ag"
+        }
+      },
+      "LogoutResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "User logged out successfully"
+          }
+        }
+      },
+      "VerifyResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Email verification successful"
+          }
+        }
+      },
+      "ProfileResponse": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email"
+          },
+          "name": {
+            "type": "string",
+            "description": "User's name"
+          }
+        }
+      },
+      "ProfileUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Updated user's name"
+          }
+        }
+      },
+      "UpdateRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Updated user's email"
+          },
+          "name": {
+            "type": "string",
+            "description": "Updated user's name"
+          }
+        }
+      },
+      "UpdateResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "User information updated successfully"
+          }
+        }
+      },
+      "ResetRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email"
+          }
+        }
+      },
+      "ResetResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Password reset successful"
+          }
+        }
+      },
+      "HappinessResponse": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "integer",
+            "description": "User's happiness level"
+          }
+        }
+      },
+      "HappinessUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "integer",
+            "description": "Updated happiness level"
+          }
+        }
+      },
+      "ForgotRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email"
+          }
+        }
+      },
+      "ForgotResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Recovery email sent successfully"
+          }
+        }
+      },
+      "GoogleAuthRequest": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Google OAuth token"
+          }
+        }
+      },
+      "GoogleAuthResponse": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email"
+          },
+          "name": {
+            "type": "string",
+            "description": "User's name"
+          },
+          "token": {
+            "type": "string",
+            "description": "JWT token for the user"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Refresh token for the user"
+          }
+        }
       }
     },
     "securitySchemes": {

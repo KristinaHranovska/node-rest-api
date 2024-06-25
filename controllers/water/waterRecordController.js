@@ -53,7 +53,7 @@ export const addWaterRecord = async (req, res, next) => {
     try {
         const newWaterRecord = await WaterRecord.create(record);
 
-        res.status(201).send(newWaterRecord);
+        res.status(201).send({newWaterRecord, message: "Water record succesfully added"});
 
     } catch (error) {
         next(error);
@@ -102,7 +102,7 @@ export const updateWaterRecord = async (req, res, next) => {
         
         const newWaterRecord = await updateAmount(id, updatedWaterRecord, { new: true });
 
-        res.status(200).json(newWaterRecord);
+        res.status(200).json({newWaterRecord, message: "Water record succesfully updated"});;
 
     } catch (error) {        
         next(error);
@@ -133,7 +133,7 @@ export const deleteWaterRecord = async (req, res, next) => {
 
         const deletedRecord = await WaterRecord.findByIdAndDelete(id);
 
-        res.status(200).send(deletedRecord);
+        res.status(200).send({deletedRecord, message: "Water record succesfully deleted"});
     } catch (error) {
         next(error);
     }

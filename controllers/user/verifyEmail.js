@@ -31,7 +31,7 @@ export const verifyEmail = async (req, res, next) => {
 
         await User.findByIdAndUpdate(user._id, { token: tokenJwt });
 
-        return res.redirect(`${FRONTEND_URL}/verify-email?token=${token}`);
+        return res.json({ token: tokenJwt });
     } catch (error) {
         next(error);
     }

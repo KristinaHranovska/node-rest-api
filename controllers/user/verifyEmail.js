@@ -8,7 +8,7 @@ const { SECRET_KEY, FRONTEND_URL } = process.env;
 export const verifyEmail = async (req, res, next) => {
     try {
         // const { verificationToken } = req.params;
-        // const user = await User.findOne({ verificationToken });
+        const user = await User.find();
 
         // if (!user) {
         //     throw HttpError(404, "User not found");

@@ -16,7 +16,7 @@ export const verifyEmail = async (req, res, next) => {
 
         if (user.isVerified) {
             jwt.sign({ id: user._id }, SECRET_KEY, { expiresIn: '1d' });
-            return res.redirect(`${FRONTEND_URL}/tracker?token=${token}`);
+            return res.redirect(`http://localhost:5173/tracker?token=${token}`);
         }
 
         user.isVerified = true;
@@ -27,7 +27,7 @@ export const verifyEmail = async (req, res, next) => {
 
         await User.findByIdAndUpdate(user._id, { token });
 
-        return res.redirect(`${FRONTEND_URL}/tracker?token=${token}`);
+        return res.redirect(`http://localhost:5173/tracker?token=${token}`);
     } catch (error) {
         next(error);
     }

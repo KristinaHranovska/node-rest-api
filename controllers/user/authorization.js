@@ -37,7 +37,8 @@ export const authorization = async (req, res, next) => {
             email: user.email,
             token,
             refreshToken,
-            message: `Welcome back, ${name} to the AquaTrack!`
+            name: user.name,
+            message: `Welcome back, ${user.name} to the AquaTrack!`
         })
 
     } catch (error) {

@@ -3,7 +3,7 @@ import HttpError from "../../helpers/HttpError.js";
 import { User } from "../../models/user.js";
 import "dotenv/config";
 
-const { SECRET_KEY, FRONTEND_URL } = process.env;
+const { SECRET_KEY, FRONTEND_URL, REFRESH_SECRET_KEY } = process.env;
 
 export const verifyEmail = async (req, res, next) => {
     try {
@@ -16,6 +16,7 @@ export const verifyEmail = async (req, res, next) => {
 
         const payload = { id: user._id };
         const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '5m' });
+        const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: '7d' });
 
         if (user.isVerified) {
             return res.redirect(`${FRONTEND_URL}/tracker`);
@@ -24,9 +25,9 @@ export const verifyEmail = async (req, res, next) => {
         user.isVerified = true;
         await user.save();
 
-        await User.findByIdAndUpdate(user._id, { token });
+        await User.findByIdAndUpdate(user._id, { token, refreshToken });
 
-        return res.redirect(`${FRONTEND_URL}/verify-email?token=${token}`);
+        return res.redirect(`${FRONTEND_URL}/verify-email?token=${token}&refreshToken=${refreshToken}`);
 
     } catch (error) {
         next(error);

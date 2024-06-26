@@ -22,7 +22,7 @@ export const forgotPassword = async (req, res, next) => {
         user.resetTokenExpiry = Date.now() + 3600000;
         await user.save();
 
-        const forgotPasswordLink = `${FRONTEND_URL}/reset?token=${resetToken}`;
+        const forgotPasswordLink = `${FRONTEND_URL}/reset?resetToken=${resetToken}`;
         const emailHtml = await renderTemplate('resetPassword', { forgotPasswordLink });
 
         const verifyEmail = {

@@ -14,6 +14,7 @@ import upload from "../middleware/multerConfig.js";
 import { googleAuth, googleRedirect } from "../controllers/user/googleAuthController.js";
 import { updateUserPassword } from "../controllers/user/updateUserPassword.js";
 import { forgotPassword } from "../controllers/user/forgotPassword.js";
+import { refreshTokensMiddleware } from "../middleware/refreshTokensMiddleware.js";
 
 const userRouter = express.Router();
 
@@ -29,7 +30,7 @@ userRouter.get('/profile', authenticate, getCurrentUser);
 
 userRouter.post("/logout", authenticate, logout);
 
-userRouter.post("/refresh-tokens", authenticate, refreshTokens);
+userRouter.post("/refresh-tokens", refreshTokensMiddleware, refreshTokens);
 
 userRouter.patch("/update", authenticate, upload.single('avatar'), updateUser);
 

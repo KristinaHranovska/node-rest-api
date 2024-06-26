@@ -14,7 +14,6 @@ import upload from "../middleware/multerConfig.js";
 import { googleAuth, googleRedirect } from "../controllers/user/googleAuthController.js";
 import { updateUserPassword } from "../controllers/user/updateUserPassword.js";
 import { forgotPassword } from "../controllers/user/forgotPassword.js";
-// import { refreshTokensMiddleware } from "../middleware/refreshTokensMiddleware.js";
 
 const userRouter = express.Router();
 

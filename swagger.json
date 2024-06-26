@@ -5,11 +5,17 @@
     "version": "1.0.0",
     "description": "The \"AquaTrack\" app helps users ensure their bodies receive an adequate amount of water each day."
   },
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
   "servers": [{ "url": "http://localhost:3000" }],
   "tags": [
     {
       "name": "Auth",
       "description": "Authorization endpoints"
+    },
+    {
+      "name": "User",
+      "description": "User-specific endpoints"
     }
   ],
   "paths": {
@@ -17,6 +23,8 @@
       "post": {
         "tags": ["Auth"],
         "summary": "User registration",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "Registration's object",
           "required": true,
@@ -54,6 +62,8 @@
       "post": {
         "tags": ["Auth"],
         "summary": "User login",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "Login's object",
           "required": true,
@@ -81,7 +91,7 @@
             "content": {}
           },
           "401": {
-            "description": "Email or password invalid",
+            "description": "Not authorized",
             "content": {}
           },
           "404": {
@@ -95,6 +105,7 @@
       "post": {
         "tags": ["Auth"],
         "summary": "User logout",
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
@@ -108,7 +119,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Not authorized",
             "content": {}
           },
           "404": {
@@ -118,10 +129,10 @@
         }
       }
     },
-    "/verify/{verificationToken}": {
+    "/users/verify/{verificationToken}": {
       "get": {
         "tags": ["Auth"],
-        "summary": "Verify email",
+        "summary": "Verify user email",
         "parameters": [
           {
             "name": "verificationToken",
@@ -134,7 +145,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Email verification successful",
+            "description": "Email successfully verified",
             "content": {
               "application/json": {
                 "schema": {
@@ -143,65 +154,80 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "400": {
+            "description": "Invalid verification token",
             "content": {}
           },
           "404": {
-            "description": "Service not found",
+            "description": "Verification token not found",
             "content": {}
           }
         }
       }
     },
-    "/profile": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "Get user profile",
+    "/users/refresh-tokens": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Refresh user access token",
+        "parameters": [],
         "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Refresh token object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "Token refresh successful",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProfileResponse"
+                  "$ref": "#/components/schemas/RefreshTokenResponse"
                 }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "400": {
+            "description": "Bad request (invalid request body)",
             "content": {}
           },
-          "404": {
-            "description": "Service not found",
+          "401": {
+            "description": "Not authorized",
             "content": {}
           }
         }
-      },
-      "put": {
-        "tags": ["Auth"],
+      }
+    },
+    "/users/update": {
+      "patch": {
+        "tags": ["User"],
         "summary": "Update user profile",
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Updated profile object",
+          "description": "Update profile object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProfileUpdateRequest"
+                "$ref": "#/components/schemas/UpdateProfileRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "User profile updated successfully",
+            "description": "Profile update success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateResponse"
+                  "$ref": "#/components/schemas/UpdateProfileResponse"
                 }
               }
             }
@@ -211,222 +237,60 @@
             "content": {}
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {}
-          },
-          "404": {
-            "description": "Service not found",
+            "description": "Not authorized",
             "content": {}
           }
         }
       }
     },
-    "/update": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Update user information",
-        "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Updated user information",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User information updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {}
-          },
-          "404": {
-            "description": "Service not found",
-            "content": {}
-          }
-        }
-      }
-    },
-    "/reset": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Reset password",
-        "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Password reset request",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResetRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Password reset successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResetResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
-          "404": {
-            "description": "Service not found",
-            "content": {}
-          }
-        }
-      }
-    },
-    "/happy": {
+    "/users/profile": {
       "get": {
-        "tags": ["Auth"],
-        "summary": "Get user's happiness level",
+        "tags": ["User"],
+        "summary": "Get user profile",
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "User profile",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HappinessResponse"
+                  "$ref": "#/components/schemas/UserProfileResponse"
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {}
-          },
-          "404": {
-            "description": "Happiness data not found",
-            "content": {}
-          }
-        }
-      },
-      "put": {
-        "tags": ["Auth"],
-        "summary": "Update user's happiness level",
-        "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Updated happiness level",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/HappinessUpdateRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Happiness level updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {}
-          },
-          "404": {
-            "description": "Service not found",
+            "description": "Not authorized",
             "content": {}
           }
         }
       }
     },
-    "/forgot": {
+    "/users/forgot": {
       "post": {
         "tags": ["Auth"],
         "summary": "Forgot password",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Forgot password request",
+          "description": "Forgot password object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ForgotRequest"
+                "$ref": "#/components/schemas/ForgotPasswordRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Recovery email sent successfully",
+            "description": "Password reset link sent",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ForgotResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
-          "404": {
-            "description": "Service not found",
-            "content": {}
-          }
-        }
-      }
-    },
-    "/google": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Authenticate with Google",
-        "requestBody": {
-          "description": "Google authentication request",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GoogleAuthRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Google authentication successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleAuthResponse"
+                  "$ref": "#/components/schemas/ForgotPasswordResponse"
                 }
               }
             }
@@ -436,51 +300,74 @@
             "content": {}
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {}
-          },
-          "404": {
-            "description": "Service not found",
+            "description": "Not authorized",
             "content": {}
           }
         }
       }
     },
-    "/google-redirect": {
+    "/users/happy": {
       "get": {
         "tags": ["Auth"],
-        "summary": "Google OAuth redirect",
-        "parameters": [
-          {
-            "name": "token",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
+        "summary": "Happy endpoint",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Happy response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HappyResponse"
+                }
+              }
             }
+          },
+          "401": {
+            "description": "Not authorized",
+            "content": {}
           }
-        ],
+        }
+      }
+    },
+    "/users/google": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Google OAuth",
+        "parameters": [],
         "responses": {
           "302": {
-            "description": "Redirecting to application",
+            "description": "Redirect to Google OAuth",
             "headers": {
               "Location": {
+                "description": "Google OAuth URL",
                 "schema": {
                   "type": "string"
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad request (missing or invalid token)",
-            "content": {}
+          }
+        }
+      }
+    },
+    "/users/google-redirect": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Google OAuth redirect",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleOAuthResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {}
-          },
-          "404": {
-            "description": "Service not found",
+            "description": "Not authorized",
             "content": {}
           }
         }
@@ -494,42 +381,31 @@
         "properties": {
           "email": {
             "type": "string",
-            "description": "User's email",
-            "format": "email"
+            "format": "email",
+            "example": "user@example.com"
           },
           "password": {
             "type": "string",
-            "description": "User's password"
+            "example": "password123"
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "gender": {
+            "type": "string",
+            "example": "male"
           }
-        },
-        "required": ["email", "password"]
+        }
       },
       "RegistrationResponse": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "email": {
-              "type": "string",
-              "format": "email",
-              "description": "User's email"
-            },
-            "userId": {
-              "type": "number",
-              "description": "User's id"
-            }
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "User registered successfully."
           }
-        },
-        "example": [
-          {
-            "email": "1@gmail.com",
-            "userId": "1"
-          },
-          {
-            "email": "2@gmail.com",
-            "userId": "2"
-          }
-        ]
+        }
       },
       "LoginRequest": {
         "type": "object",
@@ -537,41 +413,47 @@
           "email": {
             "type": "string",
             "format": "email",
-            "description": "User's email"
+            "example": "user@example.com"
           },
           "password": {
             "type": "string",
-            "description": "User's password"
+            "example": "password123"
           }
-        },
-        "required": ["email", "password"]
+        }
       },
       "LoginResponse": {
         "type": "object",
         "properties": {
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "User's email"
-          },
-          "name": {
-            "type": "string",
-            "description": "User's name"
-          },
           "token": {
             "type": "string",
-            "description": "JWT token for the user"
+            "example": "eeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YjFlMjVmNmIwYTJjY2I5NTU5MWVjNyIsImlhdCI6MTY4OTM3OTQyMywiZXhwIjoxNjg5NDYyMjIzfQ.hT2Ta6pBhDR1vOF7LjcKxofyASDPjcTZtFi9CESKIuA"
           },
           "refreshToken": {
             "type": "string",
-            "description": "Refresh token for the user"
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YWQyZWRkMTEwYjBiOGRlZjQ4MTY1ZiIsImlhdCI6MTcwNTg0ODg3NSwiZXhwIjoxNzA2NDUzNjc1fQ.MONgGZKIUzqvq13OAlJvBctxJl1rt5OXMFQeIiZm2A"
           }
-        },
-        "example": {
-          "email": "test@gmail.com",
-          "name": "TestName",
-          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YjFlMjVmNmIwYTJjY2I5NTU5MWVjNyIsImlhdCI6MTY4OTM3OTQyMywiZXhwIjoxNjg5NDYyMjIzfQ.hT2Ta6pBhDR1vOF7LjcKxofyASDPjcTZtFi9CESKIuA",
-          "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YWQyZWRkMTEwYjBiOGRlZjQ4MTY1ZiIsImlhdCI6MTcwNTg0ODg3NSwiZXhwIjoxNzA2NDUzNjc1fQ.MONgGZKIUzqvq13OAlJvBctxJl1rt5OXMFQeIiZm2Ag"
+        }
+      },
+      "RefreshTokenRequest": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YWQyZWRkMTEwYjBiOGRlZjQ4MTY1ZiIsImlhdCI6MTcwNTg0ODg3NSwiZXhwIjoxNzA2NDUzNjc1fQ.MONgGZKIUzqvq13OAlJvBctxJl1rt5OXMFQeIiZm2Aq"
+          }
+        }
+      },
+      "RefreshTokenResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YjFlMjVmNmIwYTJjY2I5NTU5MWVjNyIsImlhdCI6MTY4OTM3OTQyMywiZXhwIjoxNjg5NDYyMjIzfQ.hT2Ta6pBhDR1vOF7LjcKxofyASDPjcTZtFi9CESKIuA"
+          },
+          "refreshToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YWQyZWRkMTEwYjBiOGRlZjQ4MTY1ZiIsImlhdCI6MTcwNTg0ODg3NSwiZXhwIjoxNzA2NDUzNjc1fQ.MONgGZKIUzqvq13OAlJvBctxJl1rt5OXMFQeIiZm2A"
+          }
         }
       },
       "LogoutResponse": {
@@ -579,7 +461,7 @@
         "properties": {
           "message": {
             "type": "string",
-            "description": "User logged out successfully"
+            "example": "Logout successful."
           }
         }
       },
@@ -588,140 +470,128 @@
         "properties": {
           "message": {
             "type": "string",
-            "description": "Email verification successful"
+            "example": "Email successfully verified."
           }
         }
       },
-      "ProfileResponse": {
+      "UserProfileResponse": {
         "type": "object",
         "properties": {
-          "email": {
+          "_id": {
             "type": "string",
-            "format": "email",
-            "description": "User's email"
+            "example": "60d0fe4f5311236168a109ca"
           },
           "name": {
             "type": "string",
-            "description": "User's name"
-          }
-        }
-      },
-      "ProfileUpdateRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Updated user's name"
-          }
-        }
-      },
-      "UpdateRequest": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "Updated user's email"
+            "example": "John Doe"
           },
-          "name": {
-            "type": "string",
-            "description": "Updated user's name"
-          }
-        }
-      },
-      "UpdateResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "description": "User information updated successfully"
-          }
-        }
-      },
-      "ResetRequest": {
-        "type": "object",
-        "properties": {
           "email": {
             "type": "string",
             "format": "email",
-            "description": "User's email"
-          }
-        }
-      },
-      "ResetResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "description": "Password reset successful"
-          }
-        }
-      },
-      "HappinessResponse": {
-        "type": "object",
-        "properties": {
-          "level": {
-            "type": "integer",
-            "description": "User's happiness level"
-          }
-        }
-      },
-      "HappinessUpdateRequest": {
-        "type": "object",
-        "properties": {
-          "level": {
-            "type": "integer",
-            "description": "Updated happiness level"
-          }
-        }
-      },
-      "ForgotRequest": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "User's email"
-          }
-        }
-      },
-      "ForgotResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "description": "Recovery email sent successfully"
-          }
-        }
-      },
-      "GoogleAuthRequest": {
-        "type": "object",
-        "properties": {
-          "token": {
-            "type": "string",
-            "description": "Google OAuth token"
-          }
-        }
-      },
-      "GoogleAuthResponse": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "User's email"
+            "example": "user@example.com"
           },
-          "name": {
+          "avatar": {
             "type": "string",
-            "description": "User's name"
+            "example": "http://example.com/avatar.jpg"
+          },
+          "gender": {
+            "type": "string",
+            "example": "male"
+          },
+          "weight": {
+            "type": "number",
+            "example": 75
+          },
+          "dailyActivityTime": {
+            "type": "string",
+            "example": "60"
+          },
+          "dailyWaterNorm": {
+            "type": "number",
+            "example": 3000
           },
           "token": {
             "type": "string",
-            "description": "JWT token for the user"
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YjFlMjVmNmIwYTJjY2I5NTU5MWVjNyIsImlhdCI6MTY4OTM3OTQyMywiZXhwIjoxNjg5NDYyMjIzfQ.hT2Ta6pBhDR1vOF7LjcKxofyASDPjcTZtFi9CESKIuA"
           },
           "refreshToken": {
             "type": "string",
-            "description": "Refresh token for the user"
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YWQyZWRkMTEwYjBiOGRlZjQ4MTY1ZiIsImlhdCI6MTcwNTg0ODg3NSwiZXhwIjoxNzA2NDUzNjc1fQ.MONgGZKIUzqvq13OAlJvBctxJl1rt5OXMFQeIiZm2A"
+          }
+        }
+      },
+      "UpdateProfileRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "avatar": {
+            "type": "string",
+            "example": "http://example.com/avatar.jpg"
+          },
+          "gender": {
+            "type": "string",
+            "example": "male"
+          },
+          "weight": {
+            "type": "number",
+            "example": 75
+          },
+          "dailyActivityTime": {
+            "type": "string",
+            "example": "60"
+          },
+          "dailyWaterNorm": {
+            "type": "number",
+            "example": 3000
+          }
+        }
+      },
+      "UpdateProfileResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Profile updated successfully."
+          }
+        }
+      },
+      "ForgotPasswordRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
+          }
+        }
+      },
+      "ForgotPasswordResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Password reset link sent to email."
+          }
+        }
+      },
+      "HappyResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Everything is working fine!"
+          }
+        }
+      },
+      "GoogleOAuthResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Google OAuth successful."
           }
         }
       }

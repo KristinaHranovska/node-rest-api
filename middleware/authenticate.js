@@ -6,7 +6,7 @@ import "dotenv/config";
 const { SECRET_KEY } = process.env;
 
 export const authenticate = async (req, res, next) => {
-    if (req.path === '/users/refresh-tokens') {
+    if (req.path === '/refresh-tokens') {
         return next();
     }
 

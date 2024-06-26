@@ -8,7 +8,7 @@ export const updateUserPassword = async (req, res, next) => {
     try {
         const { resetToken, password } = req.body;
 
-        if (!token) {
+        if (!resetToken) {
             throw HttpError(400, "Token is required");
         }
 

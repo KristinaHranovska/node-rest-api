@@ -29,7 +29,7 @@ export const authorization = async (req, res, next) => {
             id: user._id,
         }
 
-        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "5m" });
+        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "30m" });
         const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: "30d" });
         await User.findByIdAndUpdate(user._id, { token, refreshToken })
 

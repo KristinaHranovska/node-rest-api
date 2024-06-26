@@ -15,7 +15,7 @@ export const verifyEmail = async (req, res, next) => {
         }
 
         const payload = { id: user._id };
-        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '5m' });
+        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '30m' });
         const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: '7d' });
 
         if (user.isVerified) {

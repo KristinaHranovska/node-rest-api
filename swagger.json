@@ -5,15 +5,90 @@
         "version": "1.0.0",
         "description": "The \"AquaTrack\" app helps users ensure their bodies receive an adequate amount of water each day."
     },
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
+    "servers": [{ "url": "http://localhost:3000" }],
+    "tags": [
+        {
+          "name": "WaterRecord",
+          "description": "Details about the water record"
+        }
+    ],
     "paths": {
-        "/example": {
-            "get": {
-                "summary": "Example endpoint",
+        "/water": {
+            "post": {
+                "tags": ["WaterRecord"],
+                "summary": "Add water record",
+
+                "parameters": [],
+
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Success"
                     }
                 }
+            }
+        },
+        "/water/{id}/amount": {
+            "patch": {
+                "tags": ["WaterRecord"],
+                "summary": "Update water record",
+
+                "parameters": [],
+                "security": [{ "Bearer" : [] }],
+
+                "requestBody": {
+                    "description": "record's object",
+                    "required": true,
+                    "content": {
+
+                    } 
+                },
+                "responses": {
+                    
+                }
+                
+
+            }
+        },
+        "water/{id}": {
+            "delete": {
+                "tags": ["WaterRecord"],
+                "summary": "Delete water record",
+                
+                "parameters": []
+                
+
+            }
+        },
+        "water/daily/{date}": {
+            "get": {
+                "tags": ["WaterRecord"],
+                "summary": "Get a daily water record",
+                
+                "parameters": []
+                
+
+            }
+        },
+        "water/monthly/{year}/{month}": {
+            "get": {
+                "tags": ["WaterRecord"],
+                "summary": "Get a mouthly water record",
+                
+                "parameters": []
+                
+
+            }
+        },
+        "water/stats": {
+            "get": {
+                "tags": ["WaterRecord"],
+                "summary": "Get the percentage of water drunk",
+                
+                "parameters": []
+                
+
             }
         }
     }

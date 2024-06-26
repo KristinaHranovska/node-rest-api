@@ -22,7 +22,7 @@ const emailSchema = Joi.object({
     })
 })
 const passwordSchema = Joi.object({
-    token: Joi.string().required(),
+    resetToken: Joi.string().required(),
     password: Joi.string().min(6).max(22).required(),
 })
 

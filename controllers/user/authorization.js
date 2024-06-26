@@ -8,7 +8,7 @@ const { SECRET_KEY, REFRESH_SECRET_KEY } = process.env;
 
 export const authorization = async (req, res, next) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, name } = req.body;
         const user = await User.findOne({ email });
 
         if (!user) {
@@ -36,7 +36,8 @@ export const authorization = async (req, res, next) => {
         res.json({
             email: user.email,
             token,
-            refreshToken
+            refreshToken,
+            message: `Welcome back, ${name} to the AquaTrack!`
         })
 
     } catch (error) {

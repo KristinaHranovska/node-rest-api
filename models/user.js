@@ -4,7 +4,7 @@ import mongooseError from '../helpers/mongooseError.js';
 const userSchema = new Schema({
     password: {
         type: String,
-        required: [true, 'Password is required'],
+        required: function () { return !this.isGoogleUser; },
     },
     email: {
         type: String,
@@ -61,6 +61,10 @@ const userSchema = new Schema({
     resetTokenExpiry: {
         type: Date,
         default: null,
+    },
+    isGoogleUser: {
+        type: Boolean,
+        default: false,
     },
 }, { versionKey: false, timestamps: true });
 

@@ -3,7 +3,7 @@ import HttpError from "../../helpers/HttpError.js";
 import { User } from "../../models/user.js";
 import "dotenv/config";
 
-const { SECRET_KEY, FRONTEND_URL } = process.env;
+const { SECRET_KEY, FRONTEND_URL, REFRESH_SECRET_KEY } = process.env;
 
 export const verifyEmail = async (req, res, next) => {
     try {
@@ -14,20 +14,21 @@ export const verifyEmail = async (req, res, next) => {
             throw HttpError(404, "User not found");
         }
 
+        const payload = { id: user._id };
+        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '5m' });
+        const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: '7d' });
+
         if (user.isVerified) {
-            jwt.sign({ id: user._id }, SECRET_KEY, { expiresIn: '1d' });
             return res.redirect(`${FRONTEND_URL}/tracker`);
         }
 
         user.isVerified = true;
         await user.save();
 
-        const payload = { id: user._id };
-        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1d' });
+        await User.findByIdAndUpdate(user._id, { token, refreshToken });
 
-        await User.findByIdAndUpdate(user._id, { token });
+        return res.redirect(`${FRONTEND_URL}/verify-email?token=${token}&refreshToken=${refreshToken}`);
 
-        return res.redirect(`${FRONTEND_URL}/tracker`);
     } catch (error) {
         next(error);
     }

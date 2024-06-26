@@ -7,25 +7,26 @@ const { SECRET_KEY, REFRESH_SECRET_KEY } = process.env;
 
 export const refreshTokens = async (req, res, next) => {
     try {
-        const { token: oldToken, refreshToken: oldRefreshToken } = req.user;
-
-        try {
-            jwt.verify(oldToken, SECRET_KEY);
-        } catch (error) {
-            return next(HttpError(401, "Refresh token is invalid or expired"));
-        }
+        const { refreshToken: oldRefreshToken } = req.body;
 
         try {
             jwt.verify(oldRefreshToken, REFRESH_SECRET_KEY);
         } catch (error) {
-            throw HttpError(401, "Refresh token is invalid or expired");
+            return next(HttpError(401, "Refresh token is invalid or expired"));
         }
 
-        const payload = { id: req.user._id };
-        const newToken = jwt.sign(payload, SECRET_KEY, { expiresIn: "15m" });
-        const newRefreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: "7d" });
+        const { id } = jwt.decode(oldRefreshToken);
+        const user = await User.findById(id);
 
-        await User.findByIdAndUpdate(req.user._id, { token: newToken, refreshToken: newRefreshToken });
+        if (!user) {
+            throw HttpError(404, "User not found");
+        }
+
+        const payload = { id: user._id };
+        const newToken = jwt.sign(payload, SECRET_KEY, { expiresIn: "30m" });
+        const newRefreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: "30d" });
+
+        await User.findByIdAndUpdate(user._id, { token: newToken, refreshToken: newRefreshToken });
 
         res.json({
             token: newToken,

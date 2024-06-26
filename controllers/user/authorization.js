@@ -12,31 +12,33 @@ export const authorization = async (req, res, next) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            throw HttpError(401, "Email or password is wrong");
+            throw HttpError(400, "Email or password is wrong");
         }
 
         if (!user.isVerified) {
-            throw HttpError(401, "Email is not verified");
+            throw HttpError(400, "Email is not verified");
         }
 
         const passwordCompare = await bcrypt.compare(password, user.password);
 
         if (!passwordCompare) {
-            throw HttpError(401, "Email or password is wrong");
+            throw HttpError(400, "Email or password is wrong");
         }
 
         const payload = {
             id: user._id,
         }
 
-        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1d" });
+        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "30m" });
         const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: "30d" });
         await User.findByIdAndUpdate(user._id, { token, refreshToken })
 
         res.json({
             email: user.email,
             token,
-            refreshToken
+            refreshToken,
+            name: user.name,
+            message: `Welcome back, ${user.name} to the AquaTrack!`
         })
 
     } catch (error) {

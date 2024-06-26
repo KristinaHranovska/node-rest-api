@@ -6,13 +6,13 @@ import { User } from "../../models/user.js";
 
 export const updateUserPassword = async (req, res, next) => {
     try {
-        const { token, password } = req.body;
+        const { resetToken, password } = req.body;
 
-        if (!token) {
+        if (!resetToken) {
             throw HttpError(400, "Token is required");
         }
 
-        const user = await User.findOne({ resetToken: token, resetTokenExpiry: { $gt: Date.now() } });
+        const user = await User.findOne({ resetToken, resetTokenExpiry: { $gt: Date.now() } });
 
         if (!user) {
             throw HttpError(400, "Invalid or expired token");

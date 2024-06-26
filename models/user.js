@@ -1,7 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { genderEnum, validationEmail } from "../helpers/constants.js";
 import mongooseError from '../helpers/mongooseError.js';
-
 const userSchema = new Schema({
     password: {
         type: String,

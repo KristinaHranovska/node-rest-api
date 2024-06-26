@@ -35,7 +35,7 @@ userRouter.patch("/update", authenticate, upload.single('avatar'), updateUser);
 
 userRouter.patch("/reset", validateBody(Schemas.passwordSchema), updateUserPassword);
 
-userRouter.get("/forgot", validateBody(Schemas.emailSchema), forgotPassword);
+userRouter.post("/forgot", validateBody(Schemas.emailSchema), forgotPassword);
 
 userRouter.get("/google", googleAuth);
 

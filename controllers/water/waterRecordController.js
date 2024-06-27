@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { nanoid } from 'nanoid';
 import moment from 'moment-timezone';
 
 import WaterRecord from "../../models/waterRecord.js"
@@ -179,6 +180,8 @@ export const getDailyWaterRecord = async (req, res, next) => {
 }
 
 
+
+
 export const getMonthlyWaterRecord = async (req, res, next) => {
 
     try {
@@ -189,18 +192,19 @@ export const getMonthlyWaterRecord = async (req, res, next) => {
             return next(HttpError(404));
         }
 
-        const startOfMonth = new Date();
-        startOfMonth.setDate(1);
+        const year = parseInt(req.params.year) || new Date().getFullYear();
+        const month = parseInt(req.params.month) - 1 || new Date().getMonth(); 
+
+
+        const startOfMonth = new Date(year, month, 1);
         startOfMonth.setHours(0, 0, 0, 0);
 
-        const endOfMonth = new Date(startOfMonth);
-        endOfMonth.setMonth(endOfMonth.getMonth() + 1);
-        endOfMonth.setDate(0);
+        const endOfMonth = new Date(year, month + 1, 0); 
         endOfMonth.setHours(23, 59, 59, 999);
 
 
         const waterRecords = await WaterRecord.find({
-            userId,
+            owner: userId,
             date: { $gte: startOfMonth, $lte: endOfMonth }
         });
 
@@ -225,21 +229,29 @@ export const getMonthlyWaterRecord = async (req, res, next) => {
             date.setDate(day);
             const formattedDate = date.toISOString().split('T')[0];
 
+            const totalAmount = groupedByDay[formattedDate] || 0;
             const percentComplete = (groupedByDay[formattedDate] || 0) / user.dailyWaterNorm * 100;
 
             daysInMonth.push({
+                id: nanoid(),
                 day: formattedDate,
-                totalAmount: groupedByDay[formattedDate] || 0,
+                totalAmount: totalAmount.toFixed(2),
                 percentComplete: percentComplete.toFixed(2)
             });
         }
-        
-        res.status(200).send(daysInMonth);
+        const totalWaterForMonth = waterRecords.reduce((sum, record) => sum + record.amount, 0);
+
+        res.status(200).send({
+            totalWaterForMonth: totalWaterForMonth,
+            daysInMonth: daysInMonth
+        });
 
     } catch (error) {
         next(error);
     }
 };
+
+
 
 
 

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import moment from 'moment-timezone';
 
 import WaterRecord from "../../models/waterRecord.js"
+import { User } from "../../models/user.js"
 import HttpError from "../../helpers/HttpError.js"
 import { 
     addWaterRecordSchema, 
@@ -179,36 +180,61 @@ export const getDailyWaterRecord = async (req, res, next) => {
 
 
 export const getMonthlyWaterRecord = async (req, res, next) => {
+
     try {
+        const userId = req.user._id;
+        const user = await User.findById(userId);
 
-        const { error, value } = monthYearSchema.validate(req.params);
-
-        if (error) {
-            return next(new Error(`Invalid parameters: ${error.message}`));
+        if (!user) {
+            return next(HttpError(404));
         }
 
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
 
-        const { year, month } = req.params;
-        const userTimezone = req.headers['timezone'] || 'UTC';
-
-        const startOfMonth = new Date(year, month - 1, 1);
-
-        const endOfMonth = new Date(year, month, 0);
+        const endOfMonth = new Date(startOfMonth);
+        endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+        endOfMonth.setDate(0);
         endOfMonth.setHours(23, 59, 59, 999);
 
 
-        const records = await WaterRecord.find({
-            owner: req.user.id,
-            date: {
-                $gte: convertToUserTimezone(startOfMonth, userTimezone),
-                $lte: convertToUserTimezone(endOfMonth, userTimezone)
-            }
+        const waterRecords = await WaterRecord.find({
+            userId,
+            date: { $gte: startOfMonth, $lte: endOfMonth }
         });
 
+       
+        const groupedByDay = waterRecords.reduce((acc, record) => {
+            const day = record.date.toISOString().split('T')[0]; 
 
-        const totalAmount = records.reduce((acc, record) => acc + record.amount, 0);
+            if (!acc[day]) {
+                acc[day] = 0;
+            }
 
-        res.status(200).send({ totalAmount });
+            acc[day] += record.amount;
+            return acc;
+        }, {});
+
+        
+        const daysInMonth = [];
+
+        for (let day = 1; day <= endOfMonth.getDate(); day++) {
+            
+            const date = new Date(startOfMonth);
+            date.setDate(day);
+            const formattedDate = date.toISOString().split('T')[0];
+
+            const percentComplete = (groupedByDay[formattedDate] || 0) / user.dailyWaterNorm * 100;
+
+            daysInMonth.push({
+                day: formattedDate,
+                totalAmount: groupedByDay[formattedDate] || 0,
+                percentComplete: percentComplete.toFixed(2)
+            });
+        }
+        
+        res.status(200).send(daysInMonth);
 
     } catch (error) {
         next(error);

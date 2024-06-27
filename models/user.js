@@ -27,8 +27,8 @@ const userSchema = new Schema({
         default: 0,
     },
     dailyActivityTime: {
-        type: String,
-        default: "00:00",
+        type: Number,
+        default: 0,
     },
     dailyWaterNorm: {
         type: Number,

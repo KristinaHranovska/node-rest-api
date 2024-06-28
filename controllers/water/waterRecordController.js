@@ -183,34 +183,37 @@ export const getDailyWaterRecord = async (req, res, next) => {
 
 
 export const getMonthlyWaterRecord = async (req, res, next) => {
-
     try {
+
         const userId = req.user._id;
         const user = await User.findById(userId);
 
         if (!user) {
-            return next(HttpError(404));
+            return next(HttpError(404, "User not found"));
         }
 
+
+        const userTimezone = req.headers['timezone'] || 'UTC';
+
         const year = parseInt(req.params.year) || new Date().getFullYear();
-        const month = parseInt(req.params.month) - 1 || new Date().getMonth(); 
+        const month = parseInt(req.params.month) - 1 || new Date().getMonth();
 
+        const startOfMonth = moment.tz({ year, month, day: 1 }, userTimezone).startOf('day');
+        const endOfMonth = moment.tz({ year, month, day: 1 }, userTimezone).endOf('month').endOf('day');
 
-        const startOfMonth = new Date(year, month, 1);
-        startOfMonth.setHours(0, 0, 0, 0);
-
-        const endOfMonth = new Date(year, month + 1, 0); 
-        endOfMonth.setHours(23, 59, 59, 999);
-
+        const utcStartOfMonth = startOfMonth.clone().utc();
+        const utcEndOfMonth = endOfMonth.clone().utc();
 
         const waterRecords = await WaterRecord.find({
             owner: userId,
-            date: { $gte: startOfMonth, $lte: endOfMonth }
+            date: { $gte: utcStartOfMonth.toDate(), $lte: utcEndOfMonth.toDate() }
         });
 
-       
+        
         const groupedByDay = waterRecords.reduce((acc, record) => {
-            const day = record.date.toISOString().split('T')[0]; 
+            
+            const localDate = moment.tz(record.date, userTimezone);
+            const day = localDate.format('YYYY-MM-DD');
 
             if (!acc[day]) {
                 acc[day] = 0;
@@ -223,14 +226,11 @@ export const getMonthlyWaterRecord = async (req, res, next) => {
         
         const daysInMonth = [];
 
-        for (let day = 1; day <= endOfMonth.getDate(); day++) {
-            
-            const date = new Date(startOfMonth);
-            date.setDate(day);
-            const formattedDate = date.toISOString().split('T')[0];
-
+        for (let day = 1; day <= endOfMonth.date(); day++) {
+            const date = moment.tz({ year, month, day }, userTimezone);
+            const formattedDate = date.format('YYYY-MM-DD');
             const totalAmount = groupedByDay[formattedDate] || 0;
-            const percentComplete = (groupedByDay[formattedDate] || 0) / user.dailyWaterNorm * 100;
+            const percentComplete = (totalAmount / user.dailyWaterNorm) * 100;
 
             daysInMonth.push({
                 id: nanoid(),
@@ -239,10 +239,11 @@ export const getMonthlyWaterRecord = async (req, res, next) => {
                 percentComplete: percentComplete.toFixed(2)
             });
         }
+
         const totalWaterForMonth = waterRecords.reduce((sum, record) => sum + record.amount, 0);
 
         res.status(200).send({
-            totalWaterForMonth: totalWaterForMonth,
+            totalWaterForMonth: totalWaterForMonth.toFixed(2),
             daysInMonth: daysInMonth
         });
 
@@ -250,9 +251,6 @@ export const getMonthlyWaterRecord = async (req, res, next) => {
         next(error);
     }
 };
-
-
-
 
 
 

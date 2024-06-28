@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
+import { nanoid } from 'nanoid';
 import moment from 'moment-timezone';
 
 import WaterRecord from "../../models/waterRecord.js"
+import { User } from "../../models/user.js"
 import HttpError from "../../helpers/HttpError.js"
 import { 
     addWaterRecordSchema, 
@@ -85,7 +87,7 @@ export const updateWaterRecord = async (req, res, next) => {
 
 
         if (existingRecord.owner.toString() !== req.user.id) {
-            return next(HttpError(404));
+            return next(HttpError(403));
         }  
 
 
@@ -144,77 +146,125 @@ export const deleteWaterRecord = async (req, res, next) => {
 export const getDailyWaterRecord = async (req, res, next) => {
     try {
 
+        const userId = req.user._id;
+
         const { error, value } = dateSchema.validate(req.params);
 
         if (error) {
-            return next(new Error(`Invalid parameters: ${error.message}` ));
+            return next(HttpError(400, error.message));
         }
 
     
         const { date } = req.params;
         const userTimezone = req.headers['timezone'] || 'UTC';
 
-        const startOfDay = new Date(date);
-        startOfDay.setHours(0, 0, 0, 0);
 
-        const endOfDay = new Date(date);
-        endOfDay.setHours(23, 59, 59, 999);
+        const startOfDay = moment.tz(date, userTimezone).startOf('day').toDate();
+        const endOfDay = moment.tz(date, userTimezone).endOf('day').toDate();
 
 
-        const records = await WaterRecord.find({ 
-            owner: req.user.id,
+        const records = await WaterRecord.find({
+            owner: userId,
             date: {
-                $gte: convertToUserTimezone(startOfDay, userTimezone),
-                $lte: convertToUserTimezone(endOfDay, userTimezone)
+                $gte: startOfDay,
+                $lte: endOfDay
             }
         });
 
-        const totalAmount = records.reduce((acc, record) => acc + record.amount, 0);
+        const formattedRecords = records.map(record => {
+            const localTime = moment.tz(record.date, userTimezone);
+            return {
+                id: nanoid(),
+                amount: record.amount,
+                owner: record.owner,
+                time: localTime.format('HH:mm')
+            };
+        });
 
-        res.status(200).send({ totalAmount });
+        const totalAmountForDay = records.reduce((acc, record) => acc + record.amount, 0).toFixed(2);
+
+        res.status(200).send({
+            totalAmountForDay: totalAmountForDay,
+            records: formattedRecords
+        });
+
     } catch (error) {
         next(error);
     }
 }
 
 
+
+
 export const getMonthlyWaterRecord = async (req, res, next) => {
     try {
 
-        const { error, value } = monthYearSchema.validate(req.params);
+        const userId = req.user._id;
+        const user = await User.findById(userId);
 
-        if (error) {
-            return next(new Error(`Invalid parameters: ${error.message}`));
+        if (!user) {
+            return next(HttpError(404, "User not found"));
         }
 
 
-        const { year, month } = req.params;
         const userTimezone = req.headers['timezone'] || 'UTC';
 
-        const startOfMonth = new Date(year, month - 1, 1);
+        const year = parseInt(req.params.year) || new Date().getFullYear();
+        const month = parseInt(req.params.month) - 1 || new Date().getMonth();
 
-        const endOfMonth = new Date(year, month, 0);
-        endOfMonth.setHours(23, 59, 59, 999);
+        const startOfMonth = moment.tz({ year, month, day: 1 }, userTimezone).startOf('day');
+        const endOfMonth = moment.tz({ year, month, day: 1 }, userTimezone).endOf('month').endOf('day');
 
+        const utcStartOfMonth = startOfMonth.clone().utc();
+        const utcEndOfMonth = endOfMonth.clone().utc();
 
-        const records = await WaterRecord.find({
-            owner: req.user.id,
-            date: {
-                $gte: convertToUserTimezone(startOfMonth, userTimezone),
-                $lte: convertToUserTimezone(endOfMonth, userTimezone)
-            }
+        const waterRecords = await WaterRecord.find({
+            owner: userId,
+            date: { $gte: utcStartOfMonth.toDate(), $lte: utcEndOfMonth.toDate() }
         });
 
+        
+        const groupedByDay = waterRecords.reduce((acc, record) => {
+            
+            const localDate = moment.tz(record.date, userTimezone);
+            const day = localDate.format('YYYY-MM-DD');
 
-        const totalAmount = records.reduce((acc, record) => acc + record.amount, 0);
+            if (!acc[day]) {
+                acc[day] = 0;
+            }
 
-        res.status(200).send({ totalAmount });
+            acc[day] += record.amount;
+            return acc;
+        }, {});
+
+        
+        const daysInMonth = [];
+
+        for (let day = 1; day <= endOfMonth.date(); day++) {
+            const date = moment.tz({ year, month, day }, userTimezone);
+            const formattedDate = date.format('YYYY-MM-DD');
+            const totalAmount = groupedByDay[formattedDate] || 0;
+            const percentComplete = (totalAmount / user.dailyWaterNorm) * 100;
+
+            daysInMonth.push({
+                id: nanoid(),
+                day: formattedDate,
+                totalAmount: totalAmount.toFixed(2),
+                percentComplete: percentComplete.toFixed(2)
+            });
+        }
+
+        const totalWaterForMonth = waterRecords.reduce((sum, record) => sum + record.amount, 0);
+
+        res.status(200).send({
+            totalWaterForMonth: totalWaterForMonth.toFixed(2),
+            daysInMonth: daysInMonth
+        });
 
     } catch (error) {
         next(error);
     }
 };
-
 
 
 

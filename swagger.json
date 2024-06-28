@@ -75,9 +75,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "schema": {
-                        "type": "string"
-                    },
+                    "type": "string",
                     "description": "Id of the water record"
                 }],
                 "security": [{ "Bearer" : [] }],
@@ -134,9 +132,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "schema": {
-                        "type": "string"
-                    },
+                    "type": "string",
                     "description": "Id of the water record"
                 }],
                 "security": [{ "Bearer": [] }],
@@ -182,9 +178,7 @@
                     "name": "date",
                     "in": "path",
                     "required": true,
-                    "schema": {
-                        "type": "string"
-                    },
+                    "type": "string",
                     "description": "Date(YYYY-MM-DD)"
                 }],
                 "security": [{ "Bearer": [] }],
@@ -226,18 +220,14 @@
                     "name": "year",
                     "in": "path",
                     "required": true,
-                    "schema": {
-                        "type": "string"
-                    },
+                    "type": "string",
                     "description": "Year"
                 },
                 {
                     "name": "month",
                     "in": "path",
                     "required": true,
-                    "schema": {
-                        "type": "string"
-                    },
+                    "type": "string",
                     "description": "Month of year"
                 }],
                 "security": [{ "Bearer": [] }],

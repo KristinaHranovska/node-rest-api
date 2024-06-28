@@ -7,7 +7,7 @@
   },
   "consumes": ["application/json"],
   "produces": ["application/json"],
-  "servers": [{ "url": "http://localhost:3000" }],
+  "servers": [{ "url": "https://aqua-track-api.onrender.com" }],
   "tags": [
     {
       "name": "Auth",
@@ -167,7 +167,7 @@
     },
     "/users/refresh-tokens": {
       "post": {
-        "tags": ["User"],
+        "tags": ["Auth"],
         "summary": "Refresh user access token",
         "parameters": [],
         "security": [{ "Bearer": [] }],
@@ -308,7 +308,7 @@
     },
     "/users/happy": {
       "get": {
-        "tags": ["Auth"],
+        "tags": ["User"],
         "summary": "Happy endpoint",
         "parameters": [],
         "security": [{ "Bearer": [] }],
@@ -391,10 +391,6 @@
           "name": {
             "type": "string",
             "example": "John Doe"
-          },
-          "gender": {
-            "type": "string",
-            "example": "male"
           }
         }
       },

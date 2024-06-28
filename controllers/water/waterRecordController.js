@@ -146,6 +146,8 @@ export const deleteWaterRecord = async (req, res, next) => {
 export const getDailyWaterRecord = async (req, res, next) => {
     try {
 
+        const userId = req.user._id;
+
         const { error, value } = dateSchema.validate(req.params);
 
         if (error) {
@@ -156,24 +158,36 @@ export const getDailyWaterRecord = async (req, res, next) => {
         const { date } = req.params;
         const userTimezone = req.headers['timezone'] || 'UTC';
 
-        const startOfDay = new Date(date);
-        startOfDay.setHours(0, 0, 0, 0);
 
-        const endOfDay = new Date(date);
-        endOfDay.setHours(23, 59, 59, 999);
+        const startOfDay = moment.tz(date, userTimezone).startOf('day').toDate();
+        const endOfDay = moment.tz(date, userTimezone).endOf('day').toDate();
 
 
-        const records = await WaterRecord.find({ 
-            owner: req.user.id,
+        const records = await WaterRecord.find({
+            owner: userId,
             date: {
-                $gte: convertToUserTimezone(startOfDay, userTimezone),
-                $lte: convertToUserTimezone(endOfDay, userTimezone)
+                $gte: startOfDay,
+                $lte: endOfDay
             }
         });
 
-        const totalAmount = records.reduce((acc, record) => acc + record.amount, 0);
+        const formattedRecords = records.map(record => {
+            const localTime = moment.tz(record.date, userTimezone);
+            return {
+                id: nanoid(),
+                amount: record.amount,
+                owner: record.owner,
+                time: localTime.format('HH:mm')
+            };
+        });
 
-        res.status(200).send({ totalAmount });
+        const totalAmountForDay = records.reduce((acc, record) => acc + record.amount, 0).toFixed(2);
+
+        res.status(200).send({
+            totalAmountForDay: totalAmountForDay,
+            records: formattedRecords
+        });
+
     } catch (error) {
         next(error);
     }

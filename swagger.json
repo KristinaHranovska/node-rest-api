@@ -357,7 +357,7 @@
                             },
                             "owner": {
                                 "type": "string",
-                                "description": "Owner id",
+                                "description": "User id",
                                 "example": "4579687c17342250d5344321"
                             },
                             "_id": {
@@ -431,12 +431,63 @@
             "DailyWaterAmountResponse": {
                 "type": "object",
                 "properties": {
-                    "totalAmount": {
+                    "totalAmountForDay": {
                         "type": "number",
                         "description": "Daily amount of water drunk",
-                        "example": "1.3"
+                        "example": 1.2
+                    },
+                    "daysInMonth": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "description": "Id of water record",
+                                    "example": "985bc32bdceba44d689a3"
+                                },
+                                "amount": {
+                                    "type": "number",
+                                    "description": "Amount of water drunk",
+                                    "example": 0.2
+                                },
+                                "owner": {
+                                    "type": "string",
+                                    "description": "User id",
+                                    "example": "4579687c17342250d5344321" 
+                                },
+                                "time": {
+                                    "type": "date",
+                                    "description": "Date of recording",
+                                    "example": "11:30"
+                                }   
+                            }
+                        }, 
+                        "example": [
+                            { 
+                                "id": "ca871234dceba44ac43cd", 
+                                "time": "11:30", 
+                                "amount": 0.2, 
+                                "owner": "4579687c17342250d5344321"
+                            },
+                            { 
+                                "id": "545bc32bdceba44d66d54", 
+                                "time": "14:01", 
+                                "amount": 0.6, 
+                                "owner": "4579687c17342250d5344321" 
+                            },
+                            { 
+                                "id": "67c3c32bdceba44d6ca76", 
+                                "time": "20:45", 
+                                "amount": 0.4, 
+                                "owner": "4579687c17342250d5344321"
+                            },
+                            {},{}
+                          ]
                     }
+                    
                 }
+            }
             },
             "MonthlyWaterAmountResponse": {
                 "type": "object",
@@ -507,4 +558,4 @@
             }
         }
     }
-}
+

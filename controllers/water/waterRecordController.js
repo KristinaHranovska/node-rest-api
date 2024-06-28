@@ -87,7 +87,7 @@ export const updateWaterRecord = async (req, res, next) => {
 
 
         if (existingRecord.owner.toString() !== req.user.id) {
-            return next(HttpError(404));
+            return next(HttpError(403));
         }  
 
 
@@ -149,7 +149,7 @@ export const getDailyWaterRecord = async (req, res, next) => {
         const { error, value } = dateSchema.validate(req.params);
 
         if (error) {
-            return next(new Error(`Invalid parameters: ${error.message}` ));
+            return next(HttpError(400, error.message));
         }
 
     

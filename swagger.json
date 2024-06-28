@@ -19,76 +19,491 @@
             "post": {
                 "tags": ["WaterRecord"],
                 "summary": "Add water record",
-
                 "parameters": [],
-
+                "security": [{ "Bearer": [] }],
+                "requestBody": {
+                  "description": "Object of water record",
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/AddWaterRecordRequest"
+                      }
+                    }
+                  }
+                },
                 "responses": {
                     "201": {
-                        "description": "Success"
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                              "schema": {
+                                "$ref": "#/components/schemas/AddWaterRecordResponse"
+                              }
+                            }
+                          }
+                    },
+                    "400": {
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Service not found",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {}
                     }
+
                 }
             }
         },
+
+
+
+
         "/water/{id}/amount": {
             "patch": {
                 "tags": ["WaterRecord"],
-                "summary": "Update water record",
-
-                "parameters": [],
+                "summary": "Update water amount",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string",
+                    "description": "Id of the water record"
+                }],
                 "security": [{ "Bearer" : [] }],
-
                 "requestBody": {
-                    "description": "record's object",
+                    "description": "Object of updated water record",
                     "required": true,
                     "content": {
-
-                    } 
-                },
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/UpdateWaterAmountRequest"
+                        }
+                      }
+                    }
+                  },
                 "responses": {
-                    
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                              "schema": {
+                                "$ref": "#/components/schemas/UpdateWaterAmountResponse"
+                              }
+                            }
+                          }
+                    },
+                    "400": {
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "content": {}
+                    },
+                    "403": {
+                        "description": "Access denied",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Service not found",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {}
+                    }
                 }
-                
-
             }
         },
         "water/{id}": {
             "delete": {
                 "tags": ["WaterRecord"],
                 "summary": "Delete water record",
-                
-                "parameters": []
-                
-
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string",
+                    "description": "Id of the water record"
+                }],
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                              "schema": {
+                                "$ref": "#/components/schemas/DeleteWaterAmountResponse"
+                              }
+                            }
+                          }
+                    },
+                    "400": {
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "content": {}
+                    },
+                    "403": {
+                        "description": "Access denied",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Service not found",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {}
+                    }
+                }
             }
         },
         "water/daily/{date}": {
             "get": {
                 "tags": ["WaterRecord"],
                 "summary": "Get a daily water record",
-                
-                "parameters": []
-                
-
+                "parameters": [{
+                    "name": "date",
+                    "in": "path",
+                    "required": true,
+                    "type": "string",
+                    "description": "Date(YYYY-MM-DD)"
+                }],
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                              "schema": {
+                                "$ref": "#/components/schemas/DailyWaterAmountResponse"
+                              }
+                            }
+                          }
+                    },
+                    "400": {
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Service not found",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {}
+                    }
+                }
             }
         },
         "water/monthly/{year}/{month}": {
             "get": {
                 "tags": ["WaterRecord"],
                 "summary": "Get a mouthly water record",
-                
-                "parameters": []
-                
-
+                "parameters": [{
+                    "name": "year",
+                    "in": "path",
+                    "required": true,
+                    "type": "string",
+                    "description": "Year"
+                },
+                {
+                    "name": "month",
+                    "in": "path",
+                    "required": true,
+                    "type": "string",
+                    "description": "Month of year"
+                }],
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                              "schema": {
+                                "$ref": "#/components/schemas/MonthlyWaterAmountResponse"
+                              }
+                            }
+                          }
+                    },
+                    "400": {
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Service not found",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {}
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AddWaterRecordRequest": {
+                "type": "object",
+                "required": ["amount"],
+                "properties": {
+                    "amount": {
+                        "type": "number",
+                        "description": "Amount of water",
+                        "example": "0.4"
+                    },
+                    "hours": {
+                        "type": "integer",
+                        "example": "14"
+                    },
+                    "minutes": {
+                        "type": "integer",
+                        "example": "45"
+                    }
+                }
+            },
+            "AddWaterRecordResponse": {
+                "type": "object",
+                "properties": {
+                    "newWaterRecord": {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "type": "number",
+                                "description": "Amount of water",
+                                "example": "0.4"
+                            },
+                            "date": {
+                                "type": "date",
+                                "description": "Date formation by user",
+                                "example": "2024-06-28T11:35:59.880Z"
+                            },
+                            "owner": {
+                                "type": "string",
+                                "description": "Owner id",
+                                "example": "4579687c17342250d5344321"
+                            },
+                            "_id": {
+                                "type": "string",
+                                "description": "Water record id",
+                                "example": "667ea32bdcebb99c66d54321"
+                            },
+                            "createdAt": {
+                                "type": "date",
+                                "description": "Date of creation",
+                                "example": "2024-06-28T11:48:59.927Z"
+                            },
+                           "updatedAt": {
+                                "type": "date",
+                                "description": "Update date",
+                               "example": "2024-06-28T11:48:59.927Z"
+                            }
+                        }
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Water record succesfully added"
+                    }
+                    
+                }
+            },
+            "UpdateWaterAmountRequest": {
+                "type": "object",
+                "required": ["amount"],
+                "properties": {
+                    "amount": {
+                        "type": "number",
+                        "description": "Updated amount of water",
+                        "example": "0.3"
+                    }
+                }
+            },
+            "UpdateWaterAmountResponse": {
+                "type": "object",
+                "properties": {
+                    "newWaterRecord": {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "type": "number",
+                                "description": "Amount of water",
+                                "example": "0.3"
+                            },
+                            "date": {
+                                "type": "date",
+                                "description": "Date formation by user",
+                                "example": "2024-06-28T11:35:59.880Z"
+                            },
+                            "owner": {
+                                "type": "string",
+                                "description": "Owner id",
+                                "example": "4579687c17342250d5344321"
+                            },
+                            "_id": {
+                                "type": "string",
+                                "description": "Water record id",
+                                "example": "667ea32bdcebb99c66d54321"
+                            },
+                            "createdAt": {
+                                "type": "date",
+                                "description": "Date of creation",
+                                "example": "2024-06-28T11:48:59.927Z"
+                            },
+                           "updatedAt": {
+                                "type": "date",
+                                "description": "Update date",
+                               "example": "2024-06-28T13:26:25.271Z"
+                            }
+                        }
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Water record succesfully updated"
+                    }
+                    
+                }
+            },
+            "DeleteWaterAmountResponse": {
+                "type": "object",
+                "properties": {
+                    "newWaterRecord": {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "type": "number",
+                                "description": "Amount of water",
+                                "example": "0.3"
+                            },
+                            "date": {
+                                "type": "date",
+                                "description": "Date formation by user",
+                                "example": "2024-06-28T11:35:59.880Z"
+                            },
+                            "owner": {
+                                "type": "string",
+                                "description": "Owner id",
+                                "example": "4579687c17342250d5344321"
+                            },
+                            "_id": {
+                                "type": "string",
+                                "description": "Water record id",
+                                "example": "667ea32bdcebb99c66d54321"
+                            },
+                            "createdAt": {
+                                "type": "date",
+                                "description": "Date of creation",
+                                "example": "2024-06-28T11:48:59.927Z"
+                            },
+                           "updatedAt": {
+                                "type": "date",
+                                "description": "Update date",
+                                "example": "2024-06-28T13:26:25.271Z"
+                            }
+                        }
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Water record succesfully deleted"
+                    }  
+                }
+            },
+            "DailyWaterAmountResponse": {
+                "type": "object",
+                "properties": {
+                    "totalAmount": {
+                        "type": "number",
+                        "description": "Daily amount of water drunk",
+                        "example": "1.3"
+                    }
+                }
+            },
+            "MonthlyWaterAmountResponse": {
+                "type": "object",
+                "properties": {
+                    "totalWaterForMonth": {
+                        "type": "number",
+                        "description": "Monthly amount of water drunk",
+                        "example": 23.4
+                    },
+                    "daysInMonth": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "description": "Id of day",
+                                    "example": "545bc32bdceba44d66d54"
+                                },
+                                "day": {
+                                    "type": "date",
+                                    "description": "Date of recording",
+                                    "example": "2024-06-28"
+                                },
+                                "totalAmount": {
+                                    "type": "number",
+                                    "description": "Amount of water drunk per day",
+                                    "example": 1.2
+                                },
+                                "percentComplete": {
+                                    "type": "string",
+                                    "description": "Percentage of user's norm",
+                                    "example": 80.00
+                                }   
+                            }
+                        }, 
+                        "example": [
+                            { 
+                                "id": "67ca1234dceba44ac54b6", 
+                                "day": "2024-06-26", 
+                                "totalAmount": 1.0, 
+                                "percentComplete": 66.66 
+                            },
+                            { 
+                                "id": "654ad234dceba44dab345", 
+                                "day": "2024-06-27", 
+                                "totalAmount": 0.75, 
+                                "percentComplete": 50.00 
+                            },
+                            { 
+                                "id": "545bc32bdceba44d66d54", 
+                                "day": "2024-06-28", 
+                                "totalAmount": 1.2, 
+                                "percentComplete": 80.00 
+                            },
+                            {},{}
+                          ]
+                    }
+                    
+                }
             }
         },
-        "water/stats": {
-            "get": {
-                "tags": ["WaterRecord"],
-                "summary": "Get the percentage of water drunk",
-                
-                "parameters": []
-                
-
+        "securitySchemes": {
+            "Bearer": {
+              "type": "http",
+              "scheme": "bearer",
+              "bearerFormat": "JWT"
             }
         }
     }

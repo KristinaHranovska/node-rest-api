@@ -434,7 +434,7 @@
                     "totalAmountForDay": {
                         "type": "number",
                         "description": "Daily amount of water drunk",
-                        "example": 1.2
+                        "example": 1.40
                     },
                     "daysInMonth": {
                         "type": "array",
@@ -442,15 +442,15 @@
                             "type": "object",
                             "properties": {
                                 "id": {
-                                    "type": "number",
-                                    "description": "Id of water record",
-                                    "example": "985bc32bdceba44d689a3"
+                                    "type": "string",
+                                    "description": "Water record id",
+                                    "example": "667e9e9c2a0eb2078ec51bcb"
                                 },
                                 "amount": {
                                     "type": "number",
                                     "description": "Amount of water drunk",
                                     "example": 0.2
-                                },
+                                },        
                                 "owner": {
                                     "type": "string",
                                     "description": "User id",
@@ -458,36 +458,34 @@
                                 },
                                 "time": {
                                     "type": "date",
-                                    "description": "Date of recording",
-                                    "example": "11:30"
+                                    "description": "Date formation by user",
+                                    "example": "2024-06-28T11:35:59.880Z"
                                 }   
                             }
                         }, 
                         "example": [
                             { 
-                                "id": "ca871234dceba44ac43cd", 
-                                "time": "11:30", 
+                                "id": "667e9e9c2a0eb2078ec51bcb", 
                                 "amount": 0.2, 
-                                "owner": "4579687c17342250d5344321"
+                                "owner": "4579687c17342250d5344321",
+                                "time": "2024-06-28T11:29:32.219Z"
                             },
                             { 
                                 "id": "545bc32bdceba44d66d54", 
-                                "time": "14:01", 
-                                "amount": 0.6, 
-                                "owner": "4579687c17342250d5344321" 
+                                "amount": 0.7, 
+                                "owner": "4579687c17342250d5344321", 
+                                "time": "2024-06-28T11:30:24.412Z"
                             },
                             { 
                                 "id": "67c3c32bdceba44d6ca76", 
-                                "time": "20:45", 
-                                "amount": 0.4, 
-                                "owner": "4579687c17342250d5344321"
+                                "amount": 0.5, 
+                                "owner": "4579687c17342250d5344321",
+                                "time": "2024-06-28T11:30:29.903Z"
                             },
                             {},{}
                           ]
                     }
-                    
                 }
-            }
             },
             "MonthlyWaterAmountResponse": {
                 "type": "object",
@@ -521,7 +519,7 @@
                                     "type": "string",
                                     "description": "Percentage of user's norm",
                                     "example": 80.00
-                                }   
+                                }    
                             }
                         }, 
                         "example": [
@@ -558,4 +556,5 @@
             }
         }
     }
+}
 

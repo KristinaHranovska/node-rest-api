@@ -87,7 +87,7 @@ export const updateWaterRecord = async (req, res, next) => {
 
 
         if (existingRecord.owner.toString() !== req.user.id) {
-            return next(HttpError(403));
+            return next(HttpError(404));
         }  
 
 
@@ -172,12 +172,11 @@ export const getDailyWaterRecord = async (req, res, next) => {
         });
 
         const formattedRecords = records.map(record => {
-            const localTime = moment.tz(record.date, userTimezone);
             return {
-                id: nanoid(),
+                id: record._id,
                 amount: record.amount,
                 owner: record.owner,
-                time: localTime.format('HH:mm')
+                time: record.date
             };
         });
 
@@ -192,7 +191,6 @@ export const getDailyWaterRecord = async (req, res, next) => {
         next(error);
     }
 }
-
 
 
 

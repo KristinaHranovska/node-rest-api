@@ -38,7 +38,8 @@ export const authorization = async (req, res, next) => {
             token,
             refreshToken,
             name: user.name,
-            avatar,
+            avatar: user.avatar,
+            dailyWaterNorm: user.dailyWaterNorm,
             message: `Welcome back, ${user.name} to the AquaTrack!`
         })
 

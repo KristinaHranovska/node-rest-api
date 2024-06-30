@@ -176,7 +176,7 @@ export const getDailyWaterRecord = async (req, res, next) => {
 
     res.status(200).send({
       totalAmountForDay: totalAmountForDay,
-      percentComplete: percentComplete,
+      percentComplete: percentComplete >= 100 ? 100 : percentComplete,
       records: formattedRecords,
     });
   } catch (error) {

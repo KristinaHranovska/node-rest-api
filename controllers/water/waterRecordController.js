@@ -52,10 +52,8 @@ export const updateWaterRecord = async (req, res, next) => {
   const userTimezone = req.headers["timezone"] || "UTC";
 
   try {
-    // Отримуємо поточну дату в часовому поясі користувача
     const now = moment().tz(userTimezone);
 
-    // Формуємо нову дату на основі часу, вказаного користувачем
     const recordDate = now.set({
       hour: hours,
       minute: minutes,
@@ -63,27 +61,23 @@ export const updateWaterRecord = async (req, res, next) => {
       millisecond: 0,
     });
 
-    // Підготовка оновлених даних для запису
     const updatedData = {
       amount: amount,
-      date: recordDate.toDate(), // Перетворюємо у JavaScript Date
+      date: recordDate.toDate(),
     };
 
-    // Валідація оновлених даних
     const { error, value } = updateWaterRecordSchema.validate(updatedData);
 
     if (error) {
       throw HttpError(400, error.message);
     }
 
-    // Оновлення запису в базі даних
     const updatedRecord = await WaterRecord.findByIdAndUpdate(id, updatedData, { new: true });
 
     if (!updatedRecord) {
       throw HttpError(404, "Water record not found");
     }
 
-    // Відправлення відповіді з оновленим записом
     res.json({ updatedRecord, message: "Water record successfully updated" });
   } catch (error) {
     next(error);

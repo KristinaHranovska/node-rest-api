@@ -16,8 +16,11 @@ export const addWaterRecord = async (req, res, next) => {
   const { amount, date } = req.body;
   const owner = req.user.id;
 
+
   const userTimezone = req.headers["timezone"] || "UTC";
-  const recordDate = moment(date).tz(userTimezone).toDate();
+  let recordDate = moment(date).tz(userTimezone).toDate();
+
+  recordDate = now.toDate();
 
   const record = {
     amount: amount,
@@ -36,7 +39,7 @@ export const addWaterRecord = async (req, res, next) => {
 
     res
       .status(201)
-      .send({ newWaterRecord, message: "Water record successfully added" });
+      .send({ newWaterRecord, message: "Water record succesfully added" });
   } catch (error) {
     next(error);
   }

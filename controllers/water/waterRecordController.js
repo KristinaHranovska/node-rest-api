@@ -47,21 +47,44 @@ export const addWaterRecord = async (req, res, next) => {
 };
 
 export const updateWaterRecord = async (req, res, next) => {
+  const { id } = req.params;
+  const { amount, hours, minutes } = req.body;
+  const userTimezone = req.headers["timezone"] || "UTC";
+
   try {
-    const { id } = req.params;
+    // Отримуємо поточну дату в часовому поясі користувача
+    const now = moment().tz(userTimezone);
 
-    const result = await WaterRecord.findByIdAndUpdate(id, req.body, { new: true });
+    // Формуємо нову дату на основі часу, вказаного користувачем
+    const recordDate = now.set({
+      hour: hours,
+      minute: minutes,
+      second: 0,
+      millisecond: 0,
+    });
 
-    if (!result) {
-      throw HttpError(404, "Not found")
+    // Підготовка оновлених даних для запису
+    const updatedData = {
+      amount: amount,
+      date: recordDate.toDate(), // Перетворюємо у JavaScript Date
+    };
+
+    // Валідація оновлених даних
+    const { error, value } = updateWaterRecordSchema.validate(updatedData);
+
+    if (error) {
+      throw HttpError(400, error.message);
     }
 
-    if (!req.body || Object.keys(req.body).length === 0) {
-      throw HttpError(400, "Body must have field")
+    // Оновлення запису в базі даних
+    const updatedRecord = await WaterRecord.findByIdAndUpdate(id, updatedData, { new: true });
+
+    if (!updatedRecord) {
+      throw HttpError(404, "Water record not found");
     }
 
-    res.json({ result, message: "Water record succesfully updated" })
-
+    // Відправлення відповіді з оновленим записом
+    res.json({ updatedRecord, message: "Water record successfully updated" });
   } catch (error) {
     next(error);
   }

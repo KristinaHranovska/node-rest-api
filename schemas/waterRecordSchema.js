@@ -11,7 +11,8 @@ export const addWaterRecordSchema = Joi.object({
 
 
 export const updateWaterRecordSchema = Joi.object({
-    amount: Joi.number().required()
+    amount: Joi.number().required(),
+    date: Joi.date().optional(),
 });
 
 

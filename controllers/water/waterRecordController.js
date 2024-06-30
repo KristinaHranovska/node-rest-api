@@ -13,29 +13,19 @@ import {
 } from "../../schemas/waterRecordSchema.js";
 
 export const addWaterRecord = async (req, res, next) => {
-  const { amount, hours, minutes } = req.body;
+  const { amount } = req.body;
   const owner = req.user.id;
 
   let recordDate;
 
   const userTimezone = req.headers["timezone"] || "UTC";
+  const now = moment().tz(userTimezone);
 
-  if (hours !== undefined && minutes !== undefined) {
-    const now = moment().tz(userTimezone);
-
-    recordDate = now.set({
-      hour: hours,
-      minute: minutes,
-      second: 0,
-      millisecond: 0,
-    });
-  } else {
-    recordDate = moment().tz(userTimezone);
-  }
+  recordDate = now.toDate();
 
   const record = {
     amount: amount,
-    date: recordDate.toDate(),
+    date: recordDate,
     owner: owner,
   };
 

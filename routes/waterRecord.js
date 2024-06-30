@@ -1,7 +1,7 @@
 import express from "express";
 
 import {
-    addWaterRecord, 
+    addWaterRecord,
     updateWaterRecord,
     deleteWaterRecord,
     getDailyWaterRecord,
@@ -12,7 +12,7 @@ const waterRouter = express.Router();
 
 
 waterRouter.post("/", addWaterRecord);
-waterRouter.patch("/:id/amount", updateWaterRecord);
+waterRouter.patch("/:id/:amount", updateWaterRecord);
 waterRouter.delete("/:id", deleteWaterRecord);
 waterRouter.get("/daily/:date", getDailyWaterRecord);
 waterRouter.get("/monthly/:year/:month", getMonthlyWaterRecord);

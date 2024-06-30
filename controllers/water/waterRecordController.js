@@ -131,6 +131,8 @@ export const deleteWaterRecord = async (req, res, next) => {
 export const getDailyWaterRecord = async (req, res, next) => {
   try {
     const userId = req.user._id;
+    const { date } = req.params;
+
     const user = await User.findById(userId);
 
     if (!user) {
@@ -143,7 +145,6 @@ export const getDailyWaterRecord = async (req, res, next) => {
       return next(HttpError(400, error.message));
     }
 
-    const { date } = req.params;
     const userTimezone = req.headers["timezone"] || "UTC";
 
     const startOfDay = moment.tz(date, userTimezone).startOf("day").toDate();
@@ -157,15 +158,6 @@ export const getDailyWaterRecord = async (req, res, next) => {
       },
     });
 
-    const formattedRecords = records.map((record) => {
-      return {
-        id: record._id,
-        amount: record.amount,
-        owner: record.owner,
-        time: record.date,
-      };
-    });
-
     const totalAmountForDay = records
       .reduce((acc, record) => acc + record.amount, 0)
       .toFixed(2);
@@ -174,11 +166,7 @@ export const getDailyWaterRecord = async (req, res, next) => {
       (totalAmountForDay / user.dailyWaterNorm) * 100
     );
 
-    res.status(200).send({
-      totalAmountForDay: totalAmountForDay,
-      percentComplete: percentComplete >= 100 ? 100 : percentComplete,
-      records: formattedRecords,
-    });
+    res.json({ totalAmountForDay, percentComplete: percentComplete >= 100 ? 100 : percentComplete, records });
   } catch (error) {
     next(error);
   }

@@ -59,42 +59,19 @@ export const addWaterRecord = async (req, res, next) => {
 export const updateWaterRecord = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { amount } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return next(HttpError(400, "Invalid ID format"));
+    const result = await WaterRecord.findByIdAndUpdate(id, req.body, { new: true });
+
+    if (!result) {
+      throw HttpError(404, "Not found")
     }
 
-    if (amount === undefined) {
-      return next(HttpError(400, "Missing field amount"));
+    if (!req.body || Object.keys(req.body).length === 0) {
+      throw HttpError(400, "Body must have field")
     }
 
-    const existingRecord = await WaterRecord.findById(id);
-    if (!existingRecord) {
-      return next(HttpError(404));
-    }
+    res.json({ result, message: "Water record succesfully updated" })
 
-    if (existingRecord.owner.toString() !== req.user.id) {
-      return next(HttpError(404));
-    }
-
-    const updatedWaterRecord = {
-      amount: amount !== undefined ? amount : existingRecord.amount,
-    };
-
-    const { error, value } =
-      updateWaterRecordSchema.validate(updatedWaterRecord);
-    if (error) {
-      return next(HttpError(400, error.message));
-    }
-
-    const newWaterRecord = await updateAmount(id, updatedWaterRecord, {
-      new: true,
-    });
-
-    res
-      .status(200)
-      .json({ newWaterRecord, message: "Water record succesfully updated" });
   } catch (error) {
     next(error);
   }

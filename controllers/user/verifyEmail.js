@@ -15,8 +15,8 @@ export const verifyEmail = async (req, res, next) => {
         }
 
         const payload = { id: user._id };
-        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '30m' });
-        const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: '7d' });
+        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1d' });
+        const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: '30d' });
 
         if (user.isVerified) {
             return res.redirect(`${FRONTEND_URL}/tracker`);

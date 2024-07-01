@@ -35,6 +35,8 @@ export const authorization = async (req, res, next) => {
 
         res.json({
             email: user.email,
+            token,
+            refreshToken,
             name: user.name,
             avatar: user.avatar,
             dailyWaterNorm: user.dailyWaterNorm,

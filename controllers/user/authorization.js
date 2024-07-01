@@ -8,7 +8,7 @@ const { SECRET_KEY, REFRESH_SECRET_KEY } = process.env;
 
 export const authorization = async (req, res, next) => {
     try {
-        const { email, password, avatar } = req.body;
+        const { email, password } = req.body;
         const user = await User.findOne({ email });
 
         if (!user) {
@@ -29,14 +29,12 @@ export const authorization = async (req, res, next) => {
             id: user._id,
         }
 
-        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "5m" });
+        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1d" });
         const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: "30d" });
         await User.findByIdAndUpdate(user._id, { token, refreshToken })
 
         res.json({
             email: user.email,
-            token,
-            refreshToken,
             name: user.name,
             avatar: user.avatar,
             dailyWaterNorm: user.dailyWaterNorm,

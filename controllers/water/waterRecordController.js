@@ -13,19 +13,22 @@ import {
 } from "../../schemas/waterRecordSchema.js";
 
 export const addWaterRecord = async (req, res, next) => {
-  const { amount } = req.body;
+  const { amount, date } = req.body;
   const owner = req.user.id;
 
   let recordDate;
 
-  const userTimezone = req.headers["timezone"] || "UTC";
-  const now = moment().tz(userTimezone);
-
-  recordDate = now.toDate();
+  if (date) {
+    recordDate = moment(date);
+  } else {
+    const userTimezone = req.headers["timezone"] || "UTC";
+    const now = moment().tz(userTimezone);
+    recordDate = now;
+  }
 
   const record = {
     amount: amount,
-    date: recordDate,
+    date: recordDate.toDate(),
     owner: owner,
   };
 
@@ -40,7 +43,7 @@ export const addWaterRecord = async (req, res, next) => {
 
     res
       .status(201)
-      .send({ newWaterRecord, message: "Water record succesfully added" });
+      .send({ newWaterRecord, message: "Water record successfully added" });
   } catch (error) {
     next(error);
   }
@@ -48,18 +51,23 @@ export const addWaterRecord = async (req, res, next) => {
 
 export const updateWaterRecord = async (req, res, next) => {
   const { id } = req.params;
-  const { amount, hours, minutes } = req.body;
+  const { amount, hours, minutes, date } = req.body;
   const userTimezone = req.headers["timezone"] || "UTC";
 
   try {
-    const now = moment().tz(userTimezone);
+    let recordDate;
 
-    const recordDate = now.set({
-      hour: hours,
-      minute: minutes,
-      second: 0,
-      millisecond: 0,
-    });
+    if (date) {
+      recordDate = moment(date);
+    } else {
+      const now = moment().tz(userTimezone);
+      recordDate = now.set({
+        hour: hours,
+        minute: minutes,
+        second: 0,
+        millisecond: 0,
+      });
+    }
 
     const updatedData = {
       amount: amount,

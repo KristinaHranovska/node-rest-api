@@ -11,6 +11,7 @@ import {
   monthYearSchema,
   updateWaterRecordSchema,
 } from "../../schemas/waterRecordSchema.js";
+import { format } from 'date-fns';
 
 export const addWaterRecord = async (req, res, next) => {
   const { amount, date } = req.body;
@@ -19,11 +20,11 @@ export const addWaterRecord = async (req, res, next) => {
   let recordDate;
 
   if (date) {
-    recordDate = moment(date);
+    recordDate = new Date(date);
   } else {
     const userTimezone = req.headers["timezone"] || "UTC";
-    const now = moment().tz(userTimezone);
-    recordDate = now;
+    const now = new Date();
+    recordDate = format(now, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", { timeZone: userTimezone });
   }
 
   const record = {
@@ -58,15 +59,10 @@ export const updateWaterRecord = async (req, res, next) => {
     let recordDate;
 
     if (date) {
-      recordDate = moment(date);
+      recordDate = new Date(date);
     } else {
-      const now = moment().tz(userTimezone);
-      recordDate = now.set({
-        hour: hours,
-        minute: minutes,
-        second: 0,
-        millisecond: 0,
-      });
+      const now = new Date();
+      recordDate = format(now, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", { timeZone: userTimezone });
     }
 
     const updatedData = {

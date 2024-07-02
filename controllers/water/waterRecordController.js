@@ -29,7 +29,7 @@ export const addWaterRecord = async (req, res, next) => {
 
   const record = {
     amount: amount,
-    date: recordDate.toDate(),
+    date: recordDate,
     owner: owner,
   };
 
@@ -52,7 +52,7 @@ export const addWaterRecord = async (req, res, next) => {
 
 export const updateWaterRecord = async (req, res, next) => {
   const { id } = req.params;
-  const { amount, hours, minutes, date } = req.body;
+  const { amount, date } = req.body;
   const userTimezone = req.headers["timezone"] || "UTC";
 
   try {
@@ -67,7 +67,7 @@ export const updateWaterRecord = async (req, res, next) => {
 
     const updatedData = {
       amount: amount,
-      date: recordDate.toDate(),
+      date: recordDate,
     };
 
     const { error, value } = updateWaterRecordSchema.validate(updatedData);

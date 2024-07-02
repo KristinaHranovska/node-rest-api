@@ -11,7 +11,7 @@ import {
   monthYearSchema,
   updateWaterRecordSchema,
 } from "../../schemas/waterRecordSchema.js";
-import { format } from 'date-fns';
+import { format, startOfDay, endOfDay } from 'date-fns';
 
 export const addWaterRecord = async (req, res, next) => {
   const { amount, date } = req.body;
@@ -41,6 +41,7 @@ export const addWaterRecord = async (req, res, next) => {
 
   try {
     const newWaterRecord = await WaterRecord.create(record);
+    console.log('New water record created:', newWaterRecord);
 
     res
       .status(201)
@@ -135,14 +136,19 @@ export const getDailyWaterRecord = async (req, res, next) => {
 
     const userTimezone = req.headers["timezone"] || "UTC";
 
-    const startOfDay = moment.tz(date, userTimezone).startOf("day").toDate();
-    const endOfDay = moment.tz(date, userTimezone).endOf("day").toDate();
+    const dateObject = new Date(date);
+
+    const startOfDayDate = startOfDay(dateObject);
+    const endOfDayDate = endOfDay(dateObject);
+
+    const startOfDayLocal = format(startOfDayDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", { timeZone: userTimezone });
+    const endOfDayLocal = format(endOfDayDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx", { timeZone: userTimezone });
 
     const records = await WaterRecord.find({
       owner: userId,
       date: {
-        $gte: startOfDay,
-        $lte: endOfDay,
+        $gte: startOfDayDate,
+        $lte: endOfDayDate,
       },
     });
 

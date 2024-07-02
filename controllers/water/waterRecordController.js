@@ -41,7 +41,6 @@ export const addWaterRecord = async (req, res, next) => {
 
   try {
     const newWaterRecord = await WaterRecord.create(record);
-    console.log('New water record created:', newWaterRecord);
 
     res
       .status(201)

@@ -21,7 +21,7 @@ AquaTrack Backend is a RESTful API built using `Node.js` and `Express.js`. It al
 1. Clone the repository:
    ```bash
    git clone https://github.com/KristinaHranovska/node-rest-api
-   cd chocolate-euphoria-backend
+   cd node-rest-api
    ```
 2. Install dependencies:
    ```bash
@@ -48,7 +48,7 @@ https://aqua-track-api.onrender.com/api-docs
 
 ## Developers
 
-### Hranovska Kristina [KristinaHranovska]
+### [@KristinaHranovska](https://github.com/KristinaHranovska)
 
 - Full implementation of `/users` endpoint:
   - Creation of a public user `registration` endpoint.
@@ -63,7 +63,7 @@ https://aqua-track-api.onrender.com/api-docs
   - Creation of an endpoint for changing the user's password in case he forgot his password.
   - Implementation of email verification using `.ejs`.
 
-### Svitlana Oseichuk [SvitlanaOseichuk]
+### [@SvitlanaOseichuk](https://github.com/SvitlanaOseichuk)
 
 - BackEnd - `/water` endpoint:
   - Creation of a private endpoint for adding a record of the volume of water consumed.
@@ -73,7 +73,7 @@ https://aqua-track-api.onrender.com/api-docs
   - Creation of a private endpoint for receiving data on the user's water consumption for a month.
   - Writing Swagger for the `/water` endpoint.
 
-### Olena Ihnatenko [Olena-Ihnatenko]
+### [@Olena-Ignatenko](https://github.com/Olena-Ignatenko)
 
 - Writing Swagger for `/users` endpoint.
 

@@ -512,8 +512,8 @@
                 }
             }
         },
-        "/water/{id}/amount": {
-            "patch": {
+        "/water/{id}": {
+            "put": {
                 "tags": [
                     "WaterRecord"
                 ],

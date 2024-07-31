@@ -73,7 +73,7 @@ https://aqua-track-api.onrender.com/api-docs
   - Creation of a private endpoint for receiving data on the user's water consumption for a month.
   - Writing Swagger for the `/water` endpoint.
 
-### [@Olena-Ignatenko](https://github.com/Olena-Ihnatenko)
+### [@Olena-Ihnatenko](https://github.com/Olena-Ihnatenko)
 
 - Writing Swagger for `/users` endpoint.
 
